@@ -2,6 +2,9 @@ from cfx_address import base32
 from cfx_address.utils import (
     hex_address_bytes
 )
+from eth_utils.address import (
+    to_checksum_address
+)
 
 MAIN_NET_NETWORK_ID = 1029
 TEST_NET_NETWORK_ID = 1
@@ -43,6 +46,10 @@ class Address:
     @property
     def hex_address(self):
         return self._hex_address
+
+    @property
+    def eth_checksum_address(self):
+        return to_checksum_address(self._hex_address)
 
     @property
     def address(self):

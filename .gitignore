@@ -2,3 +2,6 @@
 venv
 tests/__pycache__
 .idea
+build
+dist
+cfx_address.egg-info
