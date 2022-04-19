@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 DESCRIPTION = 'Conflux base32 address'
 LONG_DESCRIPTION = 'Used to convert hex to base32 address'
 
@@ -19,7 +19,7 @@ setup(
     ],  # add any additional packages that
     # needs to be installed along with your package. Eg: 'caer'
 
-    keywords=['python', 'first package'],
+    keywords=['Conflux', 'base32'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Education",

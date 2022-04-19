@@ -9,6 +9,7 @@ from eth_utils.address import (
 MAIN_NET_NETWORK_ID = 1029
 TEST_NET_NETWORK_ID = 1
 
+
 class Address:
     """Conflux base32 address"""
     MAIN_NET_PREFIX = "cfx"
@@ -60,7 +61,7 @@ class Address:
         return self._verbose_address
 
     @classmethod
-    def encode_hex_address(cls, hex_address, network_id, verbose = False):
+    def encode_hex_address(cls, hex_address, network_id, verbose=False):
         assert type(hex_address) == str
         assert type(network_id) == int
         network_prefix = cls._encode_network_prefix(network_id)
@@ -157,7 +158,7 @@ class Address:
         elif network_id == TEST_NET_NETWORK_ID:
             return cls.TEST_NET_PREFIX
         else:
-            return cls.COMMON_NET_PREFIX + network_id
+            return cls.COMMON_NET_PREFIX + str(network_id)
 
     @classmethod
     def _decode_network_prefix(cls, network_prefix):
@@ -171,12 +172,12 @@ class Address:
 
     @classmethod
     def _create_checksum(cls, prefix, payload):
-        '''
+        """
         create checksum from prefix and payload
         :param prefix: network prefix (string)
         :param payload: bytes
         :return: string
-        '''
+        """
         prefix = cls._prefix_to_words(prefix)
         delimiter = cls.VERSION_BYTE
         payload = base32.decode_to_words(payload)
@@ -217,10 +218,10 @@ class Address:
 
     @classmethod
     def _poly_mod(cls, v):
-        '''
+        """
         :param v: bytes
         :return: int64
-        '''
+        """
         assert type(v) == bytes or type(v) == bytearray
         c = 1
         for d in v:
