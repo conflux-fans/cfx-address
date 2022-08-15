@@ -1,12 +1,17 @@
 from typing import (
     Optional, 
-    Union, 
+    Union,
+    cast,
     get_args
 )
 
+from hexbytes import HexBytes
 from eth_typing import (
     ChecksumAddress,
     HexAddress,
+)
+from eth_utils.crypto import (
+    keccak
 )
 from eth_utils.address import (
     to_checksum_address,
@@ -26,7 +31,6 @@ from cfx_address.types import (
     Base32AddressParts,
     InvalidAddress,
     InvalidBase32Address,
-    InvalidNetworkId,
     NetworkPrefix
 )
 from cfx_address.consts import (
@@ -55,9 +59,7 @@ class Base32Address(str):
     
     consts = consts
     
-    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False):
-        if isinstance(address, Base32Address):
-            return str.__new__(cls, address)
+    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False) -> "Base32Address":
         """
         if network_id is specified, normalize to the specified network
 
@@ -67,19 +69,20 @@ class Base32Address(str):
         Returns:
             _type_: _description_
         """
-        if cls.is_valid_base32(address):
-            parts = cls._decode(address)
+        try:
+            parts = cls.decode(address)
             if network_id is None:
                 val = cls._encode(parts["hex_address"], parts["network_id"], verbose)
             else:
                 validate_network_id(network_id)    
                 val = cls._encode(parts["hex_address"], network_id, verbose)
-        elif is_hex_address(address):
-            validate_network_id(network_id)
-            val = cls._encode(address, network_id, verbose) # type: ignore
-        else:
-            raise InvalidAddress("Address should be either base32 or hex, "
-                             f"receives {address}")
+        except InvalidBase32Address:
+            if is_hex_address(address):
+                validate_network_id(network_id)
+                val = cls._encode(address, network_id, verbose) # type: ignore
+            else:
+                raise InvalidAddress("Address should be either base32 or hex, "
+                                f"receives {address}")
         
         return str.__new__(cls, val)
     
@@ -91,11 +94,7 @@ class Base32Address(str):
 
     @classmethod
     def zero_address(cls, network_id: int) -> "Base32Address":
-        return cls.encode("0x0000000000000000000000000000000000000000", network_id) # type: ignore
-
-    @classmethod
-    def from_hex_address(cls, hex_address: HexAddress, network_id: int) -> "Base32Address":
-        return Base32Address(cls.encode(hex_address, network_id))
+        return cls.encode("0x0000000000000000000000000000000000000000", network_id)
 
     @property
     def network_id(self) -> int:
@@ -116,6 +115,21 @@ class Base32Address(str):
     @property
     def verbose_address(self) -> "Base32Address":
         return Base32Address.encode(self.hex_address, self.network_id, True)
+    
+    @property
+    def short(self) -> str:
+        lowcase = self.lower()
+        splits = lowcase.split(DELIMITER)
+        prefix = splits[0]
+        payload = splits[-1]
+        if splits[0] == MAINNET_PREFIX:
+            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-8:]}"
+        else:
+            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-4:]}"
+    
+    @property
+    def mapped_evm_space_address(self) -> HexAddress:
+        return Base32Address._mapped_evm_address_from_hex(self.hex_address)
 
     def to_network(self, network_id: int) -> "Base32Address":
         """returns a new Base32Address object
@@ -184,13 +198,77 @@ class Base32Address(str):
     
     @classmethod
     def decode(cls, base32_address: str) -> Base32AddressParts:
-        cls.validate_base32_address(base32_address)
-        base32_address = base32_address.lower()
-        return cls._decode(base32_address)
+        """
+        raise an InvalidBase32Address exception if decode failure
+        """
+        try:
+            if not isinstance(base32_address, str):
+                raise InvalidBase32Address(f"Receives an argument of type {type(base32_address)}, expected a string")
+            if not any([
+                str(base32_address) == base32_address.upper(), 
+                str(base32_address) == base32_address.lower(), 
+            ]):
+                raise InvalidBase32Address("Base32 address is supposed to be composed of all uppercase or lower case, "
+                                        f"Receives {base32_address}")
+            
+            base32_address = base32_address.lower()
+
+            splits = base32_address.split(DELIMITER)
+            if len(splits) != 2 and len(splits) != 3:
+                raise InvalidBase32Address(
+                    "Address needs to be encode in Base32 format, such as cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaajrwuc9jnb\n"
+                    "Received: {}".format(base32_address))
+
+            # if exception occurs, outer try-except will handle
+            address_parts = cls._decode(base32_address)
+
+            # check address type
+            address_type = address_parts["address_type"]
+            if address_type == TYPE_INVALID:
+                raise InvalidBase32Address(f"Invalid address type: the hex address of the provided address is {address_parts['hex_address']}, "
+                                        "while valid conflux address is supposed to start with 0x00, 0x01 or 0x08")
+            
+            """
+            cip-37 #Decoding
+            6.Verify optional fields:
+
+            If the optional fields contain type.*: Verify the address-type according to the specification above.
+            Unknown options (options other than type.*) should be ignored.
+            
+            which means
+            if address field is not expected, reject if the address field is a known one, else ignore
+            e.g.
+            valid CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
+            invalid CFX:TYPE.NULL:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
+            ignore(but valid) CFX:GOD:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
+            """
+            if len(splits) == 3 and splits[1] != f"{TYPE}.{address_type}":
+                address_field = splits[1]
+                if address_field.startswith(f"{TYPE}.") and address_field[5:] in get_args(AddressType):
+                    raise InvalidBase32Address(f"Invalid address type field: the address type field does not match expected, "
+                                            f"expected {TYPE}.{address_type} but receives {address_field}, which is a known address type")
+            
+            # check checksum
+            hex_address = address_parts["hex_address"]
+            address_bytes = hex_address_bytes(hex_address)
+            payload = base32.encode(VERSION_BYTE + address_bytes)
+            checksum = cls._create_checksum(splits[0], payload)
+            if checksum != base32_address[-8:]:
+                raise InvalidBase32Address(f"Invalid Base32 address: checksum verification failed")
+            return address_parts
+        except Exception as e:
+            if isinstance(e, InvalidBase32Address):
+                raise e
+            else:
+                # unexpected error
+                raise InvalidBase32Address(
+                    "Address needs to be a Base32 format string, such as cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaajrwuc9jnb\n"
+                    f"Received argument {base32_address} of type {type(base32_address)}")
         
     @classmethod
     def _decode(cls, base32_address: str) -> Base32AddressParts:
-        """ do not validate unless necessary because is_valid_base32 relies on this function
+        """ 
+        do not validate unless necessary, used if validity is known
         """
         parts = base32_address.split(DELIMITER)
         network_id = cls._network_prefix_to_id(parts[0])
@@ -202,79 +280,32 @@ class Base32Address(str):
             "address_type": address_type
         }
 
-    @classmethod
-    def _has_network_prefix(cls, base32_address: str):
-        base32_address = base32_address.lower()
-        parts = base32_address.split(DELIMITER)
-        if len(parts) < 2:
-            return False
-        if parts[0] in [MAINNET_PREFIX, TESTNET_PREFIX]:
-            return True
-        if parts[0].startswith(COMMON_NET_PREFIX):
-            return True
-        return False
+    # @classmethod
+    # def _has_network_prefix(cls, base32_address: str):
+    #     base32_address = base32_address.lower()
+    #     parts = base32_address.split(DELIMITER)
+    #     if len(parts) < 2:
+    #         return False
+    #     if parts[0] in [MAINNET_PREFIX, TESTNET_PREFIX]:
+    #         return True
+    #     if parts[0].startswith(COMMON_NET_PREFIX):
+    #         return True
+    #     return False
 
     @classmethod
     def is_valid_base32(cls, base32_address: str) -> bool:
-        if not isinstance(base32_address, str):
-            return False
-        if not any([
-            str(base32_address) == base32_address.upper(), 
-            str(base32_address) == base32_address.lower(), 
-        ]):
-            return False
-        
-        base32_address = base32_address.lower()
-
         try:
-            address_parts = cls._decode(base32_address)
+            cls.decode(base32_address)
+            return True
         except:
             return False
-
-        # check address type
-        address_type = address_parts["address_type"]
-        if address_type == TYPE_INVALID:
-            return False
-        splits = base32_address.split(DELIMITER)
-        
-        """
-        cip-37 #Decoding
-        6.Verify optional fields:
-
-        If the optional fields contain type.*: Verify the address-type according to the specification above.
-        Unknown options (options other than type.*) should be ignored.
-        
-        which means
-        if address field is not expected, reject if the address field is a known one, else ignore
-        e.g.
-        valid CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
-        invalid CFX:TYPE.NULL:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
-        ignore(but valid) CFX:GOD:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
-        """
-        if len(splits) == 3 and splits[1] != f"{TYPE}.{address_type}":
-            address_field = splits[1]
-            if address_field.startswith(f"{TYPE}.") and address_field[5:] in get_args(AddressType):
-                return False
-        
-        # check checksum
-        hex_address = address_parts["hex_address"]
-        address_bytes = hex_address_bytes(hex_address)
-        payload = base32.encode(VERSION_BYTE + address_bytes)
-        checksum = cls._create_checksum(splits[0], payload)
-        if checksum != base32_address[-8:]:
-            return False
-        return True
-      
 
     @classmethod
     def validate_base32_address(cls, base32_address: str):
         """validate if an address is a valid base32_address, raises an exception if not
         """
-        if not cls.is_valid_base32(base32_address):
-            raise InvalidBase32Address(
-            "Address needs to be encode in Base32 format, such as cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaajrwuc9jnb\n"
-            "Received: {}".format(base32_address)
-        )
+        # an exception will be raised if decode failure
+        cls.decode(base32_address)
         return True
   
     @classmethod
@@ -282,6 +313,34 @@ class Base32Address(str):
         """check if two address share same hex_address and network_id
         """
         return Base32Address(address1) == address2
+    
+    @classmethod
+    def shorten_base32_address(cls, base32_address: str) -> str:
+        cls.validate_base32_address(base32_address)
+        return cls._shorten_base32_address(base32_address)
+    
+    @classmethod
+    def _shorten_base32_address(cls, base32_address: str) -> str:
+        lowcase = base32_address.lower()
+        splits = lowcase.split(DELIMITER)
+        prefix = splits[0]
+        payload = splits[-1]
+        if splits[0] == MAINNET_PREFIX:
+            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-8:]}"
+        else:
+            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-4:]}"
+    
+    @classmethod
+    def calculate_mapped_evm_space_address(cls, base32_address: str) -> HexAddress:
+        hex_address = cls.decode(base32_address)["hex_address"]
+        return cls._mapped_evm_address_from_hex(hex_address)
+
+    @classmethod
+    def _mapped_evm_address_from_hex(cls, hex_address: HexAddress) -> HexAddress:
+        # do not check hex_address validity here
+        mapped_hash = keccak(HexBytes(hex_address)).hex()
+        mapped_address = to_checksum_address(HEX_PREFIX + mapped_hash[-40:])
+        return cast(HexAddress, mapped_address)
 
     @classmethod
     def _encode_network_prefix(cls, network_id: int) -> NetworkPrefix:
@@ -301,8 +360,11 @@ class Base32Address(str):
             return TESTNET_NETWORK_ID
         else:
             if not network_prefix.startswith(COMMON_NET_PREFIX):
-                raise InvalidNetworkId(f"The network prefix {network_prefix} is invalid")
-            return int(network_prefix.replace(COMMON_NET_PREFIX, ""))
+                raise InvalidBase32Address(f"The network prefix {network_prefix} is invalid")
+            try:
+                return int(network_prefix[3:])
+            except:
+                raise InvalidBase32Address(f"The network prefix {network_prefix} is invalid")
 
     @classmethod
     def _create_checksum(cls, prefix, payload) -> str:

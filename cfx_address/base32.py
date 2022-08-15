@@ -16,7 +16,12 @@ def encode(buffer: Union[bytes, bytearray]) -> str:
 
 
 def decode(b32str: str) -> bytes:
-    assert type(b32str) == str, "please pass an str"
+    if not isinstance(b32str, str):
+        raise TypeError(f"Invalid argument type: base32 decode requires a string type argument "
+                        f"but receives an argument of type {type(b32str)}")
+    if b32str != b32str.lower():
+        raise ValueError(f"Invalid value: only lower case letters are used for base32 address, "
+                        f"receives {b32str}")
     # pad to 8's multiple with '='
     b32len = len(b32str)
     if b32len % 8 > 0:
