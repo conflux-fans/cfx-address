@@ -1,6 +1,7 @@
 from typing import (
     Optional, 
     Union, 
+    get_args
 )
 
 from eth_typing import (
@@ -13,7 +14,7 @@ from eth_utils.address import (
 )
 
 from cfx_address import (
-    base32
+    base32, consts
 )
 from cfx_address.utils import (
     hex_address_bytes,
@@ -28,35 +29,31 @@ from cfx_address.types import (
     InvalidNetworkId,
     NetworkPrefix
 )
+from cfx_address.consts import (
+    MAINNET_NETWORK_ID,
+    TESTNET_NETWORK_ID,
+    TYPE,
+    MAINNET_PREFIX ,
+    TESTNET_PREFIX,
+    COMMON_NET_PREFIX,
 
+    TYPE_NULL,
+    TYPE_BUILTIN,
+    TYPE_USER,
+    TYPE_CONTRACT,
+    TYPE_INVALID,
+    HEX_PREFIX,
+    DELIMITER,
+    
+    VERSION_BYTE,
+    CHECKSUM_TEMPLATE,
+)
 
-MAINNET_NETWORK_ID = 1029
-TESTNET_NETWORK_ID = 1
 
 class Base32Address(str):
     """Conflux base32 address"""
-    MAINNET_PREFIX = "cfx"
-    TESTNET_PREFIX = "cfxtest"
-    COMMON_NET_PREFIX = "net"
-
-    TYPE_NULL = "type.null"
-    TYPE_BUILTIN = "type.builtin"
-    TYPE_USER = "type.user"
-    TYPE_CONTRACT = "type.contract"
-    TYPE_INVALID = "type.invalid"
-    KNOWN_TYPES = [
-        TYPE_NULL,
-        TYPE_BUILTIN,
-        TYPE_USER,
-        TYPE_CONTRACT,
-        TYPE_INVALID
-    ]
-
-    HEX_PREFIX = "0x"
-    DELIMITER = ":"
-
-    VERSION_BYTE = bytes(1)
-    CHECKSUM_TEMPLATE = bytes(8)
+    
+    consts = consts
     
     def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False):
         if isinstance(address, Base32Address):
@@ -148,14 +145,14 @@ class Base32Address(str):
     ) -> str:
         network_prefix = cls._encode_network_prefix(network_id)
         address_bytes = hex_address_bytes(hex_address)
-        payload = base32.encode(cls.VERSION_BYTE + address_bytes)
+        payload = base32.encode(VERSION_BYTE + address_bytes)
         checksum = cls._create_checksum(network_prefix, payload)
         parts = [network_prefix]
         if verbose:
             address_type = cls._detect_address_type(address_bytes)
-            parts.append(address_type)
+            parts.append(f"{TYPE}.{address_type}")
         parts.append(payload + checksum)
-        address = cls.DELIMITER.join(parts)
+        address = DELIMITER.join(parts)
         if verbose:
             return address.upper()
         return address
@@ -163,20 +160,20 @@ class Base32Address(str):
     @classmethod
     def _decode_network_id(cls, base32_address: str) -> int:
         base32_address = base32_address.lower()
-        parts = base32_address.split(cls.DELIMITER)
+        parts = base32_address.split(DELIMITER)
         return cls._network_prefix_to_id(parts[0])
 
     @classmethod
     def _decode_hex_address(cls, base32_address: str) -> HexAddress:
         base32_address = base32_address.lower()
-        parts = base32_address.split(cls.DELIMITER)
+        parts = base32_address.split(DELIMITER)
         return cls._payload_to_hex(parts[-1])
 
     @classmethod
     def _payload_to_hex(cls, payload: str) -> HexAddress:
         address_buf = base32.decode(payload)
         hex_buf = address_buf[1:21]
-        return cls.HEX_PREFIX + hex_buf.hex() # type: ignore
+        return HEX_PREFIX + hex_buf.hex() # type: ignore
 
     # @classmethod
     # def _decode_address_type(cls, base32_address: str) -> AddressType:
@@ -195,7 +192,7 @@ class Base32Address(str):
     def _decode(cls, base32_address: str) -> Base32AddressParts:
         """ do not validate unless necessary because is_valid_base32 relies on this function
         """
-        parts = base32_address.split(cls.DELIMITER)
+        parts = base32_address.split(DELIMITER)
         network_id = cls._network_prefix_to_id(parts[0])
         hex_address = cls._payload_to_hex(parts[-1])
         address_type = cls._detect_address_type(hex_address_bytes(hex_address))
@@ -208,12 +205,12 @@ class Base32Address(str):
     @classmethod
     def _has_network_prefix(cls, base32_address: str):
         base32_address = base32_address.lower()
-        parts = base32_address.split(cls.DELIMITER)
+        parts = base32_address.split(DELIMITER)
         if len(parts) < 2:
             return False
-        if parts[0] in [cls.MAINNET_PREFIX, cls.TESTNET_PREFIX]:
+        if parts[0] in [MAINNET_PREFIX, TESTNET_PREFIX]:
             return True
-        if parts[0].startswith(cls.COMMON_NET_PREFIX):
+        if parts[0].startswith(COMMON_NET_PREFIX):
             return True
         return False
 
@@ -236,17 +233,33 @@ class Base32Address(str):
 
         # check address type
         address_type = address_parts["address_type"]
-        if address_type == cls.TYPE_INVALID:
+        if address_type == TYPE_INVALID:
             return False
-        splits = base32_address.split(cls.DELIMITER)
-        if len(splits) == 3 and splits[1] != address_type:
-            if splits[1] in cls.KNOWN_TYPES:
+        splits = base32_address.split(DELIMITER)
+        
+        """
+        cip-37 #Decoding
+        6.Verify optional fields:
+
+        If the optional fields contain type.*: Verify the address-type according to the specification above.
+        Unknown options (options other than type.*) should be ignored.
+        
+        which means
+        if address field is not expected, reject if the address field is a known one, else ignore
+        e.g.
+        valid CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
+        invalid CFX:TYPE.NULL:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
+        ignore(but valid) CFX:GOD:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU
+        """
+        if len(splits) == 3 and splits[1] != f"{TYPE}.{address_type}":
+            address_field = splits[1]
+            if address_field.startswith(f"{TYPE}.") and address_field[5:] in get_args(AddressType):
                 return False
         
         # check checksum
         hex_address = address_parts["hex_address"]
         address_bytes = hex_address_bytes(hex_address)
-        payload = base32.encode(cls.VERSION_BYTE + address_bytes)
+        payload = base32.encode(VERSION_BYTE + address_bytes)
         checksum = cls._create_checksum(splits[0], payload)
         if checksum != base32_address[-8:]:
             return False
@@ -273,23 +286,23 @@ class Base32Address(str):
     @classmethod
     def _encode_network_prefix(cls, network_id: int) -> NetworkPrefix:
         if network_id == MAINNET_NETWORK_ID:
-            return cls.MAINNET_PREFIX
+            return MAINNET_PREFIX
         elif network_id == TESTNET_NETWORK_ID:
-            return cls.TESTNET_PREFIX
+            return TESTNET_PREFIX
         else:
-            return cls.COMMON_NET_PREFIX + str(network_id)
+            return COMMON_NET_PREFIX + str(network_id)
 
     @classmethod
     def _network_prefix_to_id(cls, network_prefix: NetworkPrefix) -> int:
         network_prefix = network_prefix.lower()
-        if network_prefix == cls.MAINNET_PREFIX:
+        if network_prefix == MAINNET_PREFIX:
             return MAINNET_NETWORK_ID
-        elif network_prefix == cls.TESTNET_PREFIX:
+        elif network_prefix == TESTNET_PREFIX:
             return TESTNET_NETWORK_ID
         else:
-            if not network_prefix.startswith(cls.COMMON_NET_PREFIX):
+            if not network_prefix.startswith(COMMON_NET_PREFIX):
                 raise InvalidNetworkId(f"The network prefix {network_prefix} is invalid")
-            return int(network_prefix.replace(cls.COMMON_NET_PREFIX, ""))
+            return int(network_prefix.replace(COMMON_NET_PREFIX, ""))
 
     @classmethod
     def _create_checksum(cls, prefix, payload) -> str:
@@ -300,25 +313,25 @@ class Base32Address(str):
         :return: string
         """
         prefix = cls._prefix_to_words(prefix)
-        delimiter = cls.VERSION_BYTE
+        delimiter = VERSION_BYTE
         payload = base32.decode_to_words(payload)
-        template = cls.CHECKSUM_TEMPLATE
+        template = CHECKSUM_TEMPLATE
         mod = cls._poly_mod(prefix + delimiter + payload + template)
         return base32.encode(cls._checksum_to_bytes(mod))
 
     @classmethod
     def _detect_address_type(cls, hex_address_buf) -> AddressType:
         if hex_address_buf == bytes(20):
-            return cls.TYPE_NULL
+            return TYPE_NULL
         first_byte = hex_address_buf[0] & 0xf0
         if first_byte == 0x00:
-            return cls.TYPE_BUILTIN
+            return TYPE_BUILTIN
         elif first_byte == 0x10:
-            return cls.TYPE_USER
+            return TYPE_USER
         elif first_byte == 0x80:
-            return cls.TYPE_CONTRACT
+            return TYPE_CONTRACT
         else:
-            return cls.TYPE_INVALID
+            return TYPE_INVALID
 
     @classmethod
     def _prefix_to_words(cls, prefix) -> bytearray:

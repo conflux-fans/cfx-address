@@ -40,11 +40,11 @@ def test_validation():
     
 
 def test_encode():
-    assert Base32Address.encode(hex_address, 1) == testnet_address
-    assert Base32Address.encode(hex_address, 1, True) == testnet_verbose_address
-    assert Base32Address.encode(hex_address, 1029) == mainnet_address
-    assert Base32Address.encode(hex_address, 1029, True) == mainnet_verbose_address
-    assert Base32Address.encode(hex_address, 8888) == custom_net_address
+    assert str(Base32Address.encode(hex_address, 1)) == testnet_address
+    assert str(Base32Address.encode(hex_address, 1, True)) == testnet_verbose_address
+    assert str(Base32Address.encode(hex_address, 1029)) == mainnet_address
+    assert str(Base32Address.encode(hex_address, 1029, True)) == mainnet_verbose_address
+    assert str(Base32Address.encode(hex_address, 8888)) == custom_net_address
     with pytest.raises(InvalidNetworkId):
         Base32Address.encode(hex_address, 0)
     with pytest.raises(InvalidHexAddress):
@@ -70,7 +70,7 @@ def test_zero_address():
 def test_decode():
     assert Base32Address.decode(mainnet_address)["hex_address"] == hex_address
     assert Base32Address.decode(mainnet_address)["network_id"] == 1029
-    assert Base32Address.decode(mainnet_address)["address_type"] == 'type.user'
+    assert Base32Address.decode(mainnet_address)["address_type"] == 'user'
 
 def test_instance():
     instance = Base32Address(testnet_address)

@@ -36,11 +36,11 @@ NetworkPrefix = Union[
 ]
 
 AddressType = Literal[
-    "type.null", 
-    "type.builtin", 
-    "type.user", 
-    "type.contract", 
-    "type.invalid"
+    "null", 
+    "builtin", 
+    "user", 
+    "contract", 
+    "invalid"
 ]
 
 class Base32AddressParts(TypedDict):
