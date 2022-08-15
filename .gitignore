@@ -5,3 +5,8 @@ tests/__pycache__
 build
 dist
 cfx_address.egg-info
+*/__pycache__
+.vscode
+.hypothesis
+note.ipynb
+note.md

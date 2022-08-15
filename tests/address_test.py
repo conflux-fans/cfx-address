@@ -61,13 +61,8 @@ def test_encode():
         Base32Address.encode(hex_address, 0)
     with pytest.raises(InvalidHexAddress):
         Base32Address.encode(testnet_address, 1)
-
-def test_normalize():
-    assert str(Base32Address.normalize(hex_address, 1029)) == mainnet_verbose_address
-    assert str(Base32Address.normalize(mainnet_address)) == mainnet_verbose_address 
-    assert str(Base32Address.normalize(mainnet_address, 1)) == testnet_verbose_address 
     with pytest.raises(InvalidAddress):
-        Base32Address.normalize(invalid_net_address, 1)
+        Base32Address.encode(invalid_net_address, 1)
 
 def test_equals():
     assert Base32Address.equals(testnet_address, testnet_verbose_address)
@@ -96,6 +91,7 @@ def test_instance():
     assert instance.hex_address == hex_address
     assert instance.eth_checksum_address == checksum_address
     assert instance.verbose_address == testnet_verbose_address
+    assert instance.address_type == "user"
     assert f"{instance}" == testnet_address
     assert instance.short == shortened_testnet_address
     assert instance.mapped_evm_space_address == mapped_address
@@ -104,9 +100,4 @@ def test_instance():
     
     # test __eq__
     assert instance == testnet_verbose_address
-    assert instance == testnet_address
-
-def test_to_network():
-    instance = Base32Address(testnet_address)
-    assert instance.to_network(1029) == mainnet_address
     assert instance == testnet_address

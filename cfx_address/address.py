@@ -6,7 +6,7 @@ from typing import (
 )
 
 from hexbytes import HexBytes
-from eth_typing import (
+from eth_typing.evm import (
     ChecksumAddress,
     HexAddress,
 )
@@ -86,11 +86,11 @@ class Base32Address(str):
         
         return str.__new__(cls, val)
     
-    @classmethod
-    def normalize(
-        cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = True
-    ) -> "Base32Address":
-        return Base32Address(address, network_id, verbose)
+    # @classmethod
+    # def normalize(
+    #     cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = True
+    # ) -> "Base32Address":
+    #     return Base32Address(address, network_id, verbose)
 
     @classmethod
     def zero_address(cls, network_id: int) -> "Base32Address":
@@ -106,7 +106,7 @@ class Base32Address(str):
 
     @property
     def address_type(self) -> AddressType:
-        return Base32Address._detect_address_type(self)
+        return Base32Address._detect_address_type(hex_address_bytes(self.hex_address))
 
     @property
     def eth_checksum_address(self) -> ChecksumAddress:
@@ -131,15 +131,15 @@ class Base32Address(str):
     def mapped_evm_space_address(self) -> HexAddress:
         return Base32Address._mapped_evm_address_from_hex(self.hex_address)
 
-    def to_network(self, network_id: int) -> "Base32Address":
-        """returns a new Base32Address object
-        >>> addr = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
-        >>> addr.to_network(1029)
-        "cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu"
-        >>> addr
-        "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
-        """
-        return Base32Address(self, network_id)
+    # def to_network(self, network_id: int) -> "Base32Address":
+    #     """returns a new Base32Address object
+    #     >>> addr = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
+    #     >>> addr.to_network(1029)
+    #     "cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu"
+    #     >>> addr
+    #     "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
+    #     """
+    #     return Base32Address(self, network_id)
 
     def __eq__(self, __x: str) -> bool:
         parts = Base32Address.decode(__x)
@@ -226,7 +226,7 @@ class Base32Address(str):
             address_type = address_parts["address_type"]
             if address_type == TYPE_INVALID:
                 raise InvalidBase32Address(f"Invalid address type: the hex address of the provided address is {address_parts['hex_address']}, "
-                                        "while valid conflux address is supposed to start with 0x00, 0x01 or 0x08")
+                                        "while valid conflux address is supposed to start with 0x0, 0x1 or 0x8")
             
             """
             cip-37 #Decoding
@@ -301,7 +301,7 @@ class Base32Address(str):
             return False
 
     @classmethod
-    def validate_base32_address(cls, base32_address: str):
+    def validate(cls, base32_address: str):
         """validate if an address is a valid base32_address, raises an exception if not
         """
         # an exception will be raised if decode failure
@@ -316,7 +316,7 @@ class Base32Address(str):
     
     @classmethod
     def shorten_base32_address(cls, base32_address: str) -> str:
-        cls.validate_base32_address(base32_address)
+        cls.validate(base32_address)
         return cls._shorten_base32_address(base32_address)
     
     @classmethod
