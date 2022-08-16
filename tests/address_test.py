@@ -14,12 +14,12 @@ checksum_address = "0x1ECdE7223747601823f7535d7968Ba98b4881E09"
 
 testnet_verbose_address = "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4"
 testnet_address = "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
-shortened_testnet_address = "cfxtest:aatp...95j4"
+shortened_testnet_address = "cfxtest:aat...95j4"
 
 mainnet_address = "cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu"
 mainnet_verbose_address = "CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
-shortened_mainnet_address = "cfx:aatp...7ggp3vpu"
-compressed_shortened_mainnet_address = "cfx:aatp...3vpu"
+shortened_mainnet_address = "cfx:aat...7ggp3vpu"
+compressed_shortened_mainnet_address = "cfx:aat...3vpu"
 custom_net_address = "net8888:aatp533cg7d0agbd87kz48nj1mpnkca8beh6tx5zc7"
 
 invalid_type_address = "CFX:TYPE.NULL:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
@@ -35,7 +35,7 @@ invalids = [ "TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4",
 # an unknown address type, should ignore
 unknown_type_address = "CFX:GOD:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
 
-mapped_address = "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
+mapped_evm_space_address = "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
 
 def test_validation():
     assert Base32Address.is_valid_base32(testnet_address)
@@ -70,10 +70,11 @@ def test_equals():
     assert not Base32Address.equals(testnet_address, mainnet_address)
 
 def test_zero_address():
-    assert Base32Address.zero_address(1) == "cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw"
+    assert str(Base32Address.zero_address(1)) == "cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw"
+    assert str(Base32Address.zero_address(1, True)) == "CFXTEST:TYPE.NULL:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6F0VRCSW"
 
 def test_util():
-    assert Base32Address.calculate_mapped_evm_space_address(testnet_address) == mapped_address
+    assert Base32Address.calculate_mapped_evm_space_address(testnet_address) == mapped_evm_space_address
     assert Base32Address.shorten_base32_address(testnet_address) == shortened_testnet_address
 
 def test_decode():
@@ -95,7 +96,7 @@ def test_instance():
     assert instance.address_type == "user"
     assert f"{instance}" == testnet_address
     assert instance.abbr == shortened_testnet_address
-    assert instance.mapped_evm_space_address == mapped_address
+    assert instance.mapped_evm_space_address == mapped_evm_space_address
     
     assert Base32Address(mainnet_verbose_address, None, True).abbr == shortened_mainnet_address
     assert Base32Address(mainnet_verbose_address, None).compressed_abbr == compressed_shortened_mainnet_address

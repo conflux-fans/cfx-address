@@ -9,3 +9,8 @@ build:
 
 publish:
 	twine upload dist/cfx-address-${TAG}*
+
+gen-docs:
+	cd ./docs && \
+	sphinx-apidoc -o ./source ../cfx_address -f && \
+	make html

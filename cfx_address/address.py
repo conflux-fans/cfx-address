@@ -1,4 +1,5 @@
 from typing import (
+    Literal,
     Optional, 
     Union,
     cast,
@@ -19,7 +20,7 @@ from eth_utils.address import (
 )
 
 from cfx_address import (
-    base32, consts
+    base32
 )
 from cfx_address.utils import (
     hex_address_bytes,
@@ -55,19 +56,52 @@ from cfx_address.consts import (
 
 
 class Base32Address(str):
-    """Conflux base32 address"""
+    """
+    Class Base32Address can be used to create Base32Address instances and provides useful class methods to deal with base32 format addresses.
+    Base32Address inherits from str, so the Base32Address can be trivially used as strings
     
-    consts = consts
+    :examples:
+    
+    >>> address = Base32Address("0x1ecde7223747601823f7535d7968ba98b4881e09", network_id=1)
+    "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
+    >>> [
+    ...     address.address_type,
+    ...     address.network_id,
+    ...     address.hex_address,
+    ...     address.verbose_address,
+    ...     address.short,
+    ...     address.mapped_evm_space_address
+    ...     address.eth_checksum_address
+    ]
+    [
+        'user',
+        1,
+        '0x1ecde7223747601823f7535d7968ba98b4881e09',
+        'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4',
+        'cfxtest:aat...95j4',
+        '0x349f086998cF4a0C5a00b853a0E93239D81A97f6',
+        '0x1ECdE7223747601823f7535d7968Ba98b4881E09'
+    ]
+    """    
     
     def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False) -> "Base32Address":
         """
-        if network_id is specified, normalize to the specified network
-
-        Raises:
-            InvalidAddress: _description_
-
-        Returns:
-            _type_: _description_
+        :param Union[Base32Address, HexAddress, str] address: a base32-or-hex format address
+        :param Optional[int] network_id: target address network_id. Optional if first argument is a base32 address, \
+            but required for hex address
+        :param bool verbose: whether the return value will be encoded in verbose mode, defaults to False
+        :raises InvalidAddress: address is neither base32 address nor hex address
+        :raises InvalidNetworkId: network_id argument is not a positive integer or is None when address argument is a hex address
+        :return Base32Address: an encoded base32 object, which can be trivially used as python str
+        
+        :examples:
+        
+        >>> address = Base32Address("0x1ecde7223747601823f7535d7968ba98b4881e09", network_id=1)
+        "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
+        >>> address_ = Base32Address(address, network_id=1029, verbose=True)
+        "CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
+        >>> isinstance(address_, str)
+        True
         """
         try:
             parts = cls.decode(address)
@@ -86,66 +120,143 @@ class Base32Address(str):
         
         return str.__new__(cls, val)
     
-    # @classmethod
-    # def normalize(
-    #     cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = True
-    # ) -> "Base32Address":
-    #     return Base32Address(address, network_id, verbose)
-
-    @classmethod
-    def zero_address(cls, network_id: int) -> "Base32Address":
-        return cls.encode("0x0000000000000000000000000000000000000000", network_id)
+    def __eq__(self, _address: str) -> bool:
+        """
+        invoked when a base32 address is compared to another string (or Base32Address typed object),
+        
+        :param str __address: value compared to 
+        :return bool: True if self and _address are of same hex_address and network_id
+        :raises InvalidBase32Address: _address is not encoded in base32 format
+        :examples:
+        
+        >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
+        >>> assert address == "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4"
+        >>> assert "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4" == address
+        >>> assert "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4" == address
+        """
+        parts = Base32Address.decode(_address)
+        return self.hex_address == parts["hex_address"] and self.network_id == parts["network_id"]
 
     @property
     def network_id(self) -> int:
+        """
+        :return int: network_id of the address
+        :examples:
+        
+        >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
+        >>> address.network_id
+        1
+        """        
         return Base32Address._decode_network_id(self)
 
     @property
     def hex_address(self) -> HexAddress:
+        """
+        :return HexAddress: hex address of the address.
+        
+        >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
+        >>> address.hex_address
+        "0x1ecde7223747601823f7535d7968ba98b4881e09"
+        """        
         return Base32Address._decode_hex_address(self)
 
     @property
     def address_type(self) -> AddressType:
+        """
+        :return AddressType: address type of an address
+        
+        :examples:
+        
+        >>> address = Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
+        >>> address.address_type
+        "user"
+        """      
         return Base32Address._detect_address_type(hex_address_bytes(self.hex_address))
 
     @property
     def eth_checksum_address(self) -> ChecksumAddress:
+        """
+        :return ChecksumAddress: self.hex_address in ethereum checksum address format
+        
+        >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
+        >>> address.hex_address
+        "0x1ecde7223747601823f7535d7968ba98b4881e09"
+        >> address.eth_checksum_address
+        "0x1ECdE7223747601823f7535d7968Ba98b4881E09"
+        """        
         return to_checksum_address(self.hex_address)
 
     @property
     def verbose_address(self) -> "Base32Address":
+        """
+        :return Base32Address: self presented in verbose mode
+        
+        >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
+        "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
+        >>> address.verbose_address
+        "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4"
+        """        
         return Base32Address.encode(self.hex_address, self.network_id, True)
     
     @property
     def abbr(self) -> str:
+        """
+        :return str: abbreviation of the address, as mentioned in https://forum.conflux.fun/t/voting-results-for-new-address-abbreviation-standard/7131
+        
+        :examples:
+        
+        >>> Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4").abbr
+        "cfxtest:aatp...95j4"
+        >>> Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu").abbr
+        "cfx:aatp...7ggp3vpu"
+        """        
         return Base32Address._shorten_base32_address(self)
     
     @property
     def compressed_abbr(self) -> str:
+        """
+        :return str: compressed abbreviation of the address, same as property "abbr" except for mainnet address
+             
+        :examples:
+        
+        >>> address = Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
+        >>> address.abbr
+        "cfx:aatp...7ggp3vpu"
+        >>> address.compressed_abbr
+        "cfx:aat...3vpu"
+        """ 
         return Base32Address._shorten_base32_address(self, True)
     
     @property
     def mapped_evm_space_address(self) -> HexAddress:
+        """
+        :return HexAddress: the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
+        
+        >>> address = Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
+        >>> address.mapped_evm_space_address
+        "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
+        """
         return Base32Address._mapped_evm_address_from_hex(self.hex_address)
-
-    # def to_network(self, network_id: int) -> "Base32Address":
-    #     """returns a new Base32Address object
-    #     >>> addr = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
-    #     >>> addr.to_network(1029)
-    #     "cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu"
-    #     >>> addr
-    #     "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
-    #     """
-    #     return Base32Address(self, network_id)
-
-    def __eq__(self, __x: str) -> bool:
-        parts = Base32Address.decode(__x)
-        return self.hex_address == parts["hex_address"] and self.network_id == parts["network_id"]
 
     @classmethod
     def encode(
         cls, hex_address: str, network_id: int, verbose: bool=False
     ) -> "Base32Address":
+        """
+        encode hex address to base32 address
+
+        :param str hex_address: hex address begins with 0x
+        :param int network_id: address network id, e.g., 1 for testnet and 1029 for mainnet
+        :param bool verbose: whether the address will be presented in verbose mode, defaults to False
+        :return Base32Address: an encoded base32 object, which can be trivially used as python str
+        
+        :examples:
+        
+        >>> Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", 1)
+        "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
+        >>> Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", 1029, verbose)
+        "CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
+        """ 
         validate_hex_address(hex_address)
         validate_network_id(network_id)
         return Base32Address(hex_address, network_id, verbose)
@@ -196,8 +307,21 @@ class Base32Address(str):
     @classmethod
     def decode(cls, base32_address: str) -> Base32AddressParts:
         """
-        raise an InvalidBase32Address exception if decode failure
-        """
+        Decode a base32 address string and get its hex_address, address_type, and network_id
+
+        :param str base32_address: address encoded in base32 format
+        :raises InvalidBase32Address:
+        :return Base32AddressParts: a dict object with field "hex_address", "address_type" and "network_id"
+        
+        :examples:
+        
+        >>> Base32Address.decode("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
+        {
+            'network_id': 1,
+            'hex_address': '0x1ecde7223747601823f7535d7968ba98b4881e09',
+            'address_type': 'user'
+        }
+        """        
         try:
             if not isinstance(base32_address, str):
                 raise InvalidBase32Address(f"Receives an argument of type {type(base32_address)}, expected a string")
@@ -277,20 +401,11 @@ class Base32Address(str):
             "address_type": address_type
         }
 
-    # @classmethod
-    # def _has_network_prefix(cls, base32_address: str):
-    #     base32_address = base32_address.lower()
-    #     parts = base32_address.split(DELIMITER)
-    #     if len(parts) < 2:
-    #         return False
-    #     if parts[0] in [MAINNET_PREFIX, TESTNET_PREFIX]:
-    #         return True
-    #     if parts[0].startswith(COMMON_NET_PREFIX):
-    #         return True
-    #     return False
-
     @classmethod
     def is_valid_base32(cls, base32_address: str) -> bool:
+        """
+        :return bool: True if valid, else False
+        """        
         try:
             cls.decode(base32_address)
             return True
@@ -298,8 +413,13 @@ class Base32Address(str):
             return False
 
     @classmethod
-    def validate(cls, base32_address: str):
-        """validate if an address is a valid base32_address, raises an exception if not
+    def validate(cls, base32_address: str) -> Literal[True]:
+        """
+        validate if an address is a valid base32_address, raises an exception if not
+
+        :param str base32_address: address to validate 
+        :raises InvalidBase32Address: raises an exception if the address is not a valid base32 address
+        :return Literal[True]: returns True only if address is valid
         """
         # an exception will be raised if decode failure
         cls.decode(base32_address)
@@ -307,12 +427,47 @@ class Base32Address(str):
   
     @classmethod
     def equals(cls, address1: str, address2: str) -> bool:
-        """check if two address share same hex_address and network_id
+        """
+        check if two addresses share same hex_address and network_id
+
+        :param str address1: base32 address to compare
+        :param str address2: base32 address to compare
+        :raises InvalidBase32Address: either address is not a valid base32 address
+        :return bool: whether two addresses share same hex_address and network_id
         """
         return Base32Address(address1) == address2
     
     @classmethod
+    def zero_address(cls, network_id: int, verbose: bool = False) -> "Base32Address":    
+        """
+        Get zero address of the target network.
+
+        :param int network_id: target network_id
+        :param bool verbose: whether the zero address is presented in verbose mode, defaults to False
+        :return Base32Address: base32 format zero address of the target network 
+        :examples:
+        
+        >>> Base32Address.zero_address(network_id=1)
+        "cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw"
+        """        
+        return cls.encode("0x0000000000000000000000000000000000000000", network_id, verbose)
+    
+    @classmethod
     def shorten_base32_address(cls, base32_address: str, compressed=False) -> str:
+        """
+        returns the abbreviation of the address
+
+        :param str base32_address: address to shorten
+        :raises InvalidBase32Address: raised if address is invalid
+        :param bool compressed: whether the abbreviation will be presented in compressed form,\
+            which only affects mainnet addresses, defaults to False
+        :return str: the abbreviation string
+        
+        >>> Base32Address.shorten_base32_address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
+        "cfx:aat...7ggp3vpu"
+        >>> Base32Address.shorten_base32_address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu", compressed=True)
+        "cfx:aat...3vpu"
+        """        
         cls.validate(base32_address)
         return cls._shorten_base32_address(base32_address, compressed)
     
@@ -323,12 +478,21 @@ class Base32Address(str):
         prefix = splits[0]
         payload = splits[-1]
         if splits[0] != MAINNET_PREFIX or compressed:
-            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-4:]}"
+            return f"{prefix}{DELIMITER}{payload[:3]}...{payload[-4:]}"
         else:
-            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-8:]}"
+            return f"{prefix}{DELIMITER}{payload[:3]}...{payload[-8:]}"
     
     @classmethod
     def calculate_mapped_evm_space_address(cls, base32_address: str) -> HexAddress:
+        """
+        calculate the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
+
+        :raises InvalidBase32Address: raised when address is not a valid base32 address
+        :examples:
+        
+        >>> Base32Address.calculate_mapped_evm_space_address("CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4")
+        "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
+        """        
         hex_address = cls.decode(base32_address)["hex_address"]
         return cls._mapped_evm_address_from_hex(hex_address)
 
@@ -336,8 +500,8 @@ class Base32Address(str):
     def _mapped_evm_address_from_hex(cls, hex_address: HexAddress) -> HexAddress:
         # do not check hex_address validity here
         mapped_hash = keccak(HexBytes(hex_address)).hex()
-        mapped_address = to_checksum_address(HEX_PREFIX + mapped_hash[-40:])
-        return cast(HexAddress, mapped_address)
+        mapped_evm_space_address = to_checksum_address(HEX_PREFIX + mapped_hash[-40:])
+        return cast(HexAddress, mapped_evm_space_address)
 
     @classmethod
     def _encode_network_prefix(cls, network_id: int) -> NetworkPrefix:

@@ -11,3 +11,4 @@ cfx_address.egg-info
 note.ipynb
 note.md
 docs/_build/
+*/.DS_STORE
