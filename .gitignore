@@ -10,3 +10,4 @@ cfx_address.egg-info
 .hypothesis
 note.ipynb
 note.md
+docs/_build/

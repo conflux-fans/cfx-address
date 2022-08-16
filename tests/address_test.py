@@ -19,6 +19,7 @@ shortened_testnet_address = "cfxtest:aatp...95j4"
 mainnet_address = "cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu"
 mainnet_verbose_address = "CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
 shortened_mainnet_address = "cfx:aatp...7ggp3vpu"
+compressed_shortened_mainnet_address = "cfx:aatp...3vpu"
 custom_net_address = "net8888:aatp533cg7d0agbd87kz48nj1mpnkca8beh6tx5zc7"
 
 invalid_type_address = "CFX:TYPE.NULL:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
@@ -93,10 +94,11 @@ def test_instance():
     assert instance.verbose_address == testnet_verbose_address
     assert instance.address_type == "user"
     assert f"{instance}" == testnet_address
-    assert instance.short == shortened_testnet_address
+    assert instance.abbr == shortened_testnet_address
     assert instance.mapped_evm_space_address == mapped_address
     
-    assert Base32Address(mainnet_verbose_address, None, True).short == shortened_mainnet_address
+    assert Base32Address(mainnet_verbose_address, None, True).abbr == shortened_mainnet_address
+    assert Base32Address(mainnet_verbose_address, None).compressed_abbr == compressed_shortened_mainnet_address
     
     # test __eq__
     assert instance == testnet_verbose_address

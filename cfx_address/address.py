@@ -117,15 +117,12 @@ class Base32Address(str):
         return Base32Address.encode(self.hex_address, self.network_id, True)
     
     @property
-    def short(self) -> str:
-        lowcase = self.lower()
-        splits = lowcase.split(DELIMITER)
-        prefix = splits[0]
-        payload = splits[-1]
-        if splits[0] == MAINNET_PREFIX:
-            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-8:]}"
-        else:
-            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-4:]}"
+    def abbr(self) -> str:
+        return Base32Address._shorten_base32_address(self)
+    
+    @property
+    def compressed_abbr(self) -> str:
+        return Base32Address._shorten_base32_address(self, True)
     
     @property
     def mapped_evm_space_address(self) -> HexAddress:
@@ -315,20 +312,20 @@ class Base32Address(str):
         return Base32Address(address1) == address2
     
     @classmethod
-    def shorten_base32_address(cls, base32_address: str) -> str:
+    def shorten_base32_address(cls, base32_address: str, compressed=False) -> str:
         cls.validate(base32_address)
-        return cls._shorten_base32_address(base32_address)
+        return cls._shorten_base32_address(base32_address, compressed)
     
     @classmethod
-    def _shorten_base32_address(cls, base32_address: str) -> str:
+    def _shorten_base32_address(cls, base32_address: str, compressed=False) -> str:
         lowcase = base32_address.lower()
         splits = lowcase.split(DELIMITER)
         prefix = splits[0]
         payload = splits[-1]
-        if splits[0] == MAINNET_PREFIX:
-            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-8:]}"
-        else:
+        if splits[0] != MAINNET_PREFIX or compressed:
             return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-4:]}"
+        else:
+            return f"{prefix}{DELIMITER}{payload[:4]}...{payload[-8:]}"
     
     @classmethod
     def calculate_mapped_evm_space_address(cls, base32_address: str) -> HexAddress:

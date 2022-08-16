@@ -97,6 +97,7 @@ assert not address == mainnet_address
     address.verbose_address,
     address.short,
     address.mapped_evm_space_address
+    address.eth_checksum_address
 ]
 # ['user',
 #  1,
