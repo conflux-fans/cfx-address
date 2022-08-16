@@ -1,7 +1,6 @@
 import sys
 
 from typing import (
-    Annotated,
     Literal,
     NewType, 
     TypedDict,
@@ -27,6 +26,7 @@ class InvalidNetworkId(ValueError):
 
 
 if sys.version_info >= (3,9):
+    from typing import Annotated
     TRIVIAL_NETWORK_PREFIX = Annotated[str, lambda x: x.startswith("net")]
 else:
     TRIVIAL_NETWORK_PREFIX = NewType("TRIVIAL_NETWORK_PREFIX", str)
