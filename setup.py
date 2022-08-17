@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.1.0'
+VERSION = '1.0.0b1'
 DESCRIPTION = 'Conflux base32 address'
 LONG_DESCRIPTION = 'Used to convert hex to base32 address'
 

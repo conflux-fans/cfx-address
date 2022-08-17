@@ -1,11 +1,29 @@
 from typing import Any
 
-from cfx_address.types import InvalidHexAddress, InvalidNetworkId
-from eth_utils.address import is_hex_address
+from cfx_address.types import (
+    InvalidHexAddress, 
+    InvalidNetworkId
+)
+from eth_utils.address import (
+    is_hex_address
+)
+from eth_typing.evm import (
+    HexAddress,
+)
 
-def eth_address_to_cfx(address: str):
-    assert type(address) == str
-    return '0x1' + address.lower()[3:]
+def eth_eoa_address_to_cfx_hex(eoa_address: str) -> HexAddress:
+    """
+    Convert an ethereum EOA address to valid cfx hex address.
+    
+    In conflux, only addresses starting with 0x1 are valid user-type addresses. 
+    This function convert ethereum EOA address to the corresponding form in conflux.
+
+    :param str address: ethereum address
+    :raises InvalidHexAddress: 
+    :return HexAddress: corresponding hex address in conflux, starting with '0x1'
+    """
+    validate_hex_address(eoa_address)
+    return '0x1' + eoa_address.lower()[3:] # type: ignore
 
 
 def hex_address_bytes(hex_address: str):

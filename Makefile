@@ -12,5 +12,5 @@ publish:
 
 gen-docs:
 	cd ./docs && \
-	sphinx-apidoc -o ./source ../cfx_address -f && \
+	sphinx-apidoc -o ./source ../cfx_address -f -M --separate && \
 	make html

@@ -32,6 +32,7 @@ from cfx_address.types import (
     Base32AddressParts,
     InvalidAddress,
     InvalidBase32Address,
+    InvalidConfluxHexAddress,
     NetworkPrefix
 )
 from cfx_address.consts import (
@@ -270,8 +271,10 @@ class Base32Address(str):
         payload = base32.encode(VERSION_BYTE + address_bytes)
         checksum = cls._create_checksum(network_prefix, payload)
         parts = [network_prefix]
+        address_type = cls._detect_address_type(address_bytes)
+        if address_type == TYPE_INVALID:
+            raise InvalidConfluxHexAddress
         if verbose:
-            address_type = cls._detect_address_type(address_bytes)
             parts.append(f"{TYPE}.{address_type}")
         parts.append(payload + checksum)
         address = DELIMITER.join(parts)
@@ -404,6 +407,7 @@ class Base32Address(str):
     @classmethod
     def is_valid_base32(cls, base32_address: str) -> bool:
         """
+        Whether a string is a valid base32 address
         :return bool: True if valid, else False
         """        
         try:

@@ -21,6 +21,12 @@ class InvalidBase32Address(InvalidAddress):
 class InvalidHexAddress(InvalidAddress):
     pass
 
+class InvalidConfluxHexAddress(InvalidHexAddress):
+    """
+    The supplied hex address starts without 0x0, 0x1 or 0x8, which is required by conflux
+    """
+    pass
+
 class InvalidNetworkId(ValueError):
     pass
 
