@@ -22,7 +22,8 @@ copyright = "2022, Zhang Wenda"
 author = "Zhang Wenda"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.0b1"
+# modify by bumpversion
+release = "1.0.0-beta.1"
 
 
 # -- General configuration ---------------------------------------------------

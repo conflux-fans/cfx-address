@@ -1,11 +1,10 @@
 .pytest_cache
 venv
-tests/__pycache__
+**/__pycache__
 .idea
 build
 dist
 cfx_address.egg-info
-*/__pycache__
 .vscode
 .hypothesis
 note.ipynb

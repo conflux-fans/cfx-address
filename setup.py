@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 
-VERSION = '1.0.0b1'
 DESCRIPTION = 'Conflux base32 address'
 
 
@@ -37,6 +36,7 @@ extras_require = {
         # "bumpversion",
         "wheel",
         "pycryptodome",
+        "bumpversion==0.6.0"
         # "flaky>=3.7.0,<4",
         # "hypothesis>=3.31.2,<6",
         # "pytest>=6.2.5,<7",
@@ -68,7 +68,7 @@ with open('./README.md') as readme:
 setup(
     # the name must match the folder name 'verysimplemodule'
     name="cfx-address",
-    version=VERSION,
+    version="1.0.0-beta.1", # edit using bumpversion
     author="The Conflux foundation",
     author_email="wangpan@conflux-chain.org",
     long_description_content_type='text/markdown',
