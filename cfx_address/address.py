@@ -408,6 +408,7 @@ class Base32Address(str):
     def is_valid_base32(cls, base32_address: str) -> bool:
         """
         Whether a string is a valid base32 address
+        
         :return bool: True if valid, else False
         """        
         try:
