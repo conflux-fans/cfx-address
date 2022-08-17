@@ -27,6 +27,9 @@ jobs:
     - name: generate documents
       run: |
         make gen-docs
+    - name: add nojekyll
+      run: |
+        touch docs/build/html/.nojekyll
     - name: Publish document to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v3
