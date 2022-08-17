@@ -35,7 +35,7 @@ extras_require = {
     ],
     'dev': [
         # "bumpversion",
-        "wheel"
+        "wheel",
         "pycryptodome",
         # "flaky>=3.7.0,<4",
         # "hypothesis>=3.31.2,<6",
