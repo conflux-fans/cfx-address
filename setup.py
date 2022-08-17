@@ -2,13 +2,11 @@ from setuptools import setup, find_packages
 
 VERSION = '1.0.0b1'
 DESCRIPTION = 'Conflux base32 address'
-LONG_DESCRIPTION = 'Used to convert hex to base32 address'
 
 
 extras_require = {
     'tester': [
         "pytest>=6.2.5,<7",
-        "pycryptodome",
     ],
     'linter': [
         # "black>=22.1.0,<23.0",
@@ -37,6 +35,8 @@ extras_require = {
     ],
     'dev': [
         # "bumpversion",
+        "wheel"
+        "pycryptodome",
         # "flaky>=3.7.0,<4",
         # "hypothesis>=3.31.2,<6",
         # "pytest>=6.2.5,<7",
@@ -61,6 +61,9 @@ extras_require['dev'] = (
     + extras_require['dev']
 )
 
+with open('./README.md') as readme:
+    long_description = readme.read()
+
 # Setting up
 setup(
     # the name must match the folder name 'verysimplemodule'
@@ -68,8 +71,8 @@ setup(
     version=VERSION,
     author="The Conflux foundation",
     author_email="wangpan@conflux-chain.org",
-    description=DESCRIPTION,
-    long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
+    long_description=long_description,
     packages=find_packages(),
     install_requires=[
         "eth-utils>=2.0.0,<3.0.0",

@@ -27,6 +27,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install ".[dev]"
-    - name: Test with pytest
+    - name: Test with pytest and doctest
       run: |
-        pytest tests
+        make test

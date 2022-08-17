@@ -1,8 +1,8 @@
 # cfx-address
 
-[cfx-address](https://pypi.org/project/cfx-address/)
-
 Conflux base32 address utilities
+
+Full documentation -> https://conflux-fans.github.io/cfx-address/cfx_address.html#module-cfx_address
 
 ## installation
 

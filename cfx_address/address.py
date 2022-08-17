@@ -64,25 +64,18 @@ class Base32Address(str):
     :examples:
     
     >>> address = Base32Address("0x1ecde7223747601823f7535d7968ba98b4881e09", network_id=1)
-    "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
+    >>> address
+    'cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4'
     >>> [
     ...     address.address_type,
     ...     address.network_id,
     ...     address.hex_address,
     ...     address.verbose_address,
-    ...     address.short,
-    ...     address.mapped_evm_space_address
-    ...     address.eth_checksum_address
-    ]
-    [
-        'user',
-        1,
-        '0x1ecde7223747601823f7535d7968ba98b4881e09',
-        'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4',
-        'cfxtest:aat...95j4',
-        '0x349f086998cF4a0C5a00b853a0E93239D81A97f6',
-        '0x1ECdE7223747601823f7535d7968Ba98b4881E09'
-    ]
+    ...     address.abbr,
+    ...     address.mapped_evm_space_address,
+    ...     address.eth_checksum_address,
+    ... ]
+    ['user', 1, '0x1ecde7223747601823f7535d7968ba98b4881e09', 'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4', 'cfxtest:aat...95j4', '0x349f086998cF4a0C5a00b853a0E93239D81A97f6', '0x1ECdE7223747601823f7535d7968Ba98b4881E09']
     """    
     
     def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False) -> "Base32Address":
@@ -98,9 +91,11 @@ class Base32Address(str):
         :examples:
         
         >>> address = Base32Address("0x1ecde7223747601823f7535d7968ba98b4881e09", network_id=1)
-        "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
+        >>> address
+        'cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4'
         >>> address_ = Base32Address(address, network_id=1029, verbose=True)
-        "CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
+        >>> address_
+        'CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU'
         >>> isinstance(address_, str)
         True
         """
@@ -157,7 +152,7 @@ class Base32Address(str):
         
         >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
         >>> address.hex_address
-        "0x1ecde7223747601823f7535d7968ba98b4881e09"
+        '0x1ecde7223747601823f7535d7968ba98b4881e09'
         """        
         return Base32Address._decode_hex_address(self)
 
@@ -170,7 +165,7 @@ class Base32Address(str):
         
         >>> address = Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
         >>> address.address_type
-        "user"
+        'user'
         """      
         return Base32Address._detect_address_type(hex_address_bytes(self.hex_address))
 
@@ -181,9 +176,9 @@ class Base32Address(str):
         
         >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
         >>> address.hex_address
-        "0x1ecde7223747601823f7535d7968ba98b4881e09"
-        >> address.eth_checksum_address
-        "0x1ECdE7223747601823f7535d7968Ba98b4881E09"
+        '0x1ecde7223747601823f7535d7968ba98b4881e09'
+        >>> address.eth_checksum_address
+        '0x1ECdE7223747601823f7535d7968Ba98b4881E09'
         """        
         return to_checksum_address(self.hex_address)
 
@@ -193,9 +188,8 @@ class Base32Address(str):
         :return Base32Address: self presented in verbose mode
         
         >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
-        "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
         >>> address.verbose_address
-        "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4"
+        'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4'
         """        
         return Base32Address.encode(self.hex_address, self.network_id, True)
     
@@ -207,9 +201,9 @@ class Base32Address(str):
         :examples:
         
         >>> Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4").abbr
-        "cfxtest:aatp...95j4"
+        'cfxtest:aat...95j4'
         >>> Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu").abbr
-        "cfx:aatp...7ggp3vpu"
+        'cfx:aat...7ggp3vpu'
         """        
         return Base32Address._shorten_base32_address(self)
     
@@ -222,9 +216,9 @@ class Base32Address(str):
         
         >>> address = Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
         >>> address.abbr
-        "cfx:aatp...7ggp3vpu"
+        'cfx:aat...7ggp3vpu'
         >>> address.compressed_abbr
-        "cfx:aat...3vpu"
+        'cfx:aat...3vpu'
         """ 
         return Base32Address._shorten_base32_address(self, True)
     
@@ -235,7 +229,7 @@ class Base32Address(str):
         
         >>> address = Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
         >>> address.mapped_evm_space_address
-        "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
+        '0x349f086998cF4a0C5a00b853a0E93239D81A97f6'
         """
         return Base32Address._mapped_evm_address_from_hex(self.hex_address)
 
@@ -254,9 +248,9 @@ class Base32Address(str):
         :examples:
         
         >>> Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", 1)
-        "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
-        >>> Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", 1029, verbose)
-        "CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
+        'cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4'
+        >>> Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", 1029, verbose=True)
+        'CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU'
         """ 
         validate_hex_address(hex_address)
         validate_network_id(network_id)
@@ -319,11 +313,7 @@ class Base32Address(str):
         :examples:
         
         >>> Base32Address.decode("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
-        {
-            'network_id': 1,
-            'hex_address': '0x1ecde7223747601823f7535d7968ba98b4881e09',
-            'address_type': 'user'
-        }
+        {'network_id': 1, 'hex_address': '0x1ecde7223747601823f7535d7968ba98b4881e09', 'address_type': 'user'}
         """        
         try:
             if not isinstance(base32_address, str):
@@ -453,7 +443,7 @@ class Base32Address(str):
         :examples:
         
         >>> Base32Address.zero_address(network_id=1)
-        "cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw"
+        'cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw'
         """        
         return cls.encode("0x0000000000000000000000000000000000000000", network_id, verbose)
     
@@ -469,9 +459,9 @@ class Base32Address(str):
         :return str: the abbreviation string
         
         >>> Base32Address.shorten_base32_address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
-        "cfx:aat...7ggp3vpu"
+        'cfx:aat...7ggp3vpu'
         >>> Base32Address.shorten_base32_address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu", compressed=True)
-        "cfx:aat...3vpu"
+        'cfx:aat...3vpu'
         """        
         cls.validate(base32_address)
         return cls._shorten_base32_address(base32_address, compressed)
@@ -496,7 +486,7 @@ class Base32Address(str):
         :examples:
         
         >>> Base32Address.calculate_mapped_evm_space_address("CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4")
-        "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
+        '0x349f086998cF4a0C5a00b853a0E93239D81A97f6'
         """        
         hex_address = cls.decode(base32_address)["hex_address"]
         return cls._mapped_evm_address_from_hex(hex_address)

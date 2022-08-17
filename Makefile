@@ -14,3 +14,7 @@ gen-docs:
 	cd ./docs && \
 	sphinx-apidoc -o ./source ../cfx_address -f -M --separate && \
 	make html
+
+test:
+	pytest tests
+	python3 -m doctest cfx_address/address.py cfx_address/utils.py

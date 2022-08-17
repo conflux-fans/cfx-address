@@ -19,8 +19,12 @@ def eth_eoa_address_to_cfx_hex(eoa_address: str) -> HexAddress:
     This function convert ethereum EOA address to the corresponding form in conflux.
 
     :param str address: ethereum address
-    :raises InvalidHexAddress: 
+    :raises InvalidHexAddress: the argument is not a valid hex address 
     :return HexAddress: corresponding hex address in conflux, starting with '0x1'
+    :examplse: 
+    
+    >>> eth_eoa_address_to_cfx_hex("0xd43d2a93e97245E290feE74276a1EF8D275bE646")
+    '0x143d2a93e97245e290fee74276a1ef8d275be646'
     """
     validate_hex_address(eoa_address)
     return '0x1' + eoa_address.lower()[3:] # type: ignore
