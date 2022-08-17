@@ -33,7 +33,15 @@ release = "1.0.0-beta.2"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.doctest",
 ]
+
+doctest_global_setup = '''
+try:
+    from cfx_address import *
+except ImportError:
+    pass
+'''
 
 autodoc_default_options = {
     # "members": "var1, var2",

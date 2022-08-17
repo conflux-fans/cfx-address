@@ -17,5 +17,7 @@ gen-docs:
 	make html
 
 test:
-	pytest tests
-	python3 -m doctest cfx_address/address.py cfx_address/utils.py
+	pytest tests && \
+	cd ./docs && \
+	make doctest
+	
