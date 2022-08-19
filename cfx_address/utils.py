@@ -1,48 +1,36 @@
-from typing import Any
-
-from cfx_address.types import (
-    InvalidHexAddress, 
-    InvalidNetworkId
-)
-from eth_utils.address import (
-    is_hex_address
-)
-from eth_typing.evm import (
-    HexAddress,
+from typing import (
+    Any
 )
 
-def eth_eoa_address_to_cfx_hex(eoa_address: str) -> HexAddress:
-    """
-    Convert an ethereum EOA address to valid cfx hex address.
-    
-    In conflux, only addresses starting with 0x1 are valid user-type addresses. 
-    This function convert ethereum EOA address to the corresponding form in conflux.
+from cfx_address._utils import (
+    validate_hex_address,
+    validate_network_id,
+    eth_eoa_address_to_cfx_hex
+)
+from cfx_address.address import (
+    Base32Address
+)
+# from eth_utils.address import (
+#     is_hex_address
+# )
 
-    :param str address: ethereum address
-    :raises InvalidHexAddress: the argument is not a valid hex address 
-    :return HexAddress: corresponding hex address in conflux, starting with '0x1'
-    :examplse: 
-    
-    >>> eth_eoa_address_to_cfx_hex("0xd43d2a93e97245E290feE74276a1EF8D275bE646")
-    '0x143d2a93e97245e290fee74276a1ef8d275be646'
-    """
-    validate_hex_address(eoa_address)
-    return '0x1' + eoa_address.lower()[3:] # type: ignore
+validate_base32 = Base32Address.validate
+is_valid_base32 = Base32Address.is_valid_base32
 
+# def is_valid_address(value: str) -> bool:
+#     """
+#     checks if a value is a valid string-typed address, either hex address or base32 address is ok
 
-def hex_address_bytes(hex_address: str):
-    assert type(hex_address) == str
-    return bytes.fromhex(hex_address.lower().replace('0x', ""))
+#     :param Any value: value to check
+#     :return bool: True if valid, otherwise False
+#     """    
+#     return is_hex_address(value) or is_valid_base32(value)
 
-def validate_network_id(network_id: Any):
-    if isinstance(network_id, int) and network_id > 0:
-        return True
-    raise InvalidNetworkId("Expected network_id to be a positive integer. "
-                     f"Receives {network_id} of type {type(network_id)}")
-
-
-
-def validate_hex_address(hex_address):
-    if not is_hex_address(hex_address):
-        raise InvalidHexAddress("Expected a hex40 address. "
-                                f"Receives {hex_address}")
+__all__ = [
+    "validate_hex_address",
+    "validate_network_id",
+    "eth_eoa_address_to_cfx_hex",
+    "validate_base32",
+    "is_valid_base32",
+    # "is_hex_address"
+]

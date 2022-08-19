@@ -17,7 +17,6 @@ gen-docs:
 	make html
 
 test:
-	pytest tests && \
-	cd ./docs && \
-	make doctest
+	pytest tests 
+	cd ./docs && make doctest
 	

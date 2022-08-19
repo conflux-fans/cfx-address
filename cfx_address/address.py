@@ -1,4 +1,5 @@
 from typing import (
+    Any,
     Literal,
     Optional, 
     Union,
@@ -22,7 +23,7 @@ from eth_utils.address import (
 from cfx_address import (
     base32
 )
-from cfx_address.utils import (
+from cfx_address._utils import (
     hex_address_bytes,
     validate_hex_address,
     validate_network_id
@@ -30,10 +31,12 @@ from cfx_address.utils import (
 from cfx_address.types import (
     AddressType,
     Base32AddressParts,
+    NetworkPrefix,
+)
+from cfx_utils.exceptions import (
     InvalidAddress,
     InvalidBase32Address,
     InvalidConfluxHexAddress,
-    NetworkPrefix
 )
 from cfx_address.consts import (
     MAINNET_NETWORK_ID,
@@ -59,7 +62,7 @@ from cfx_address.consts import (
 class Base32Address(str):
     """
     Class Base32Address can be used to create Base32Address instances and provides useful class methods to deal with base32 format addresses.
-    Base32Address inherits from str, so the Base32Address can be trivially used as strings
+    ## Base32Address inherits from str, so the Base32Address can be trivially used as strings
     
     :examples:
     
@@ -81,8 +84,7 @@ class Base32Address(str):
     def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False) -> "Base32Address":
         """
         :param Union[Base32Address, HexAddress, str] address: a base32-or-hex format address
-        :param Optional[int] network_id: target address network_id. Optional if first argument is a base32 address, \
-            but required for hex address
+        :param Optional[int] network_id: target address network_id. Optional if first argument is a base32 address, but required for hex address
         :param bool verbose: whether the return value will be encoded in verbose mode, defaults to False
         :raises InvalidAddress: address is neither base32 address nor hex address
         :raises InvalidNetworkId: network_id argument is not a positive integer or is None when address argument is a hex address
@@ -132,6 +134,9 @@ class Base32Address(str):
         """
         parts = Base32Address.decode(_address)
         return self.hex_address == parts["hex_address"] and self.network_id == parts["network_id"]
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
     @property
     def network_id(self) -> int:
@@ -395,29 +400,29 @@ class Base32Address(str):
         }
 
     @classmethod
-    def is_valid_base32(cls, base32_address: str) -> bool:
+    def is_valid_base32(cls, value: Any) -> bool:
         """
-        Whether a string is a valid base32 address
+        Whether a value is a valid string-typed base32 address
         
         :return bool: True if valid, else False
         """        
         try:
-            cls.decode(base32_address)
+            cls.decode(value)
             return True
         except:
             return False
 
     @classmethod
-    def validate(cls, base32_address: str) -> Literal[True]:
+    def validate(cls, value: Any) -> Literal[True]:
         """
-        validate if an address is a valid base32_address, raises an exception if not
+        validate if a value is a valid string-typed base32_address, raises an exception if not
 
         :param str base32_address: address to validate 
         :raises InvalidBase32Address: raises an exception if the address is not a valid base32 address
         :return Literal[True]: returns True only if address is valid
         """
         # an exception will be raised if decode failure
-        cls.decode(base32_address)
+        cls.decode(value)
         return True
   
     @classmethod

@@ -2,15 +2,12 @@ import pytest
 from cfx_address.address import (
     Base32Address,
 )
-from cfx_address.utils import (
-    eth_eoa_address_to_cfx_hex
-)
-from cfx_address.types import (
+from cfx_utils.exceptions import (
+    InvalidNetworkId,
     InvalidAddress, 
     InvalidBase32Address,
     InvalidHexAddress, 
     InvalidConfluxHexAddress, 
-    InvalidNetworkId,
 )
 
 hex_address = "0x1ecde7223747601823f7535d7968ba98b4881e09"
@@ -42,7 +39,7 @@ unknown_type_address = "CFX:GOD:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
 mapped_evm_space_address = "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
 
 eoa_address = "0xd43d2a93e97245E290feE74276a1EF8D275bE646"
-converted_address = "0x143d2a93e97245e290fee74276a1ef8d275be646"
+# converted_address = "0x143d2a93e97245e290fee74276a1ef8d275be646"
 
 def test_validation():
     assert Base32Address.is_valid_base32(testnet_address)
@@ -114,6 +111,3 @@ def test_instance():
     # test __eq__
     assert instance == testnet_verbose_address
     assert instance == testnet_address
-
-def test_eoa_address_convert():
-    assert eth_eoa_address_to_cfx_hex(eoa_address) == converted_address
