@@ -77,10 +77,11 @@ setup(
     install_requires=[
         "eth-utils>=2.0.0,<3.0.0",
         "hexbytes>=0.1.0,<1.0.0",
+        "cfx-utils>=1.0.0b3",
     ],  # add any additional packages that
     # needs to be installed along with your package. Eg: 'caer'
     extras_require=extras_require,
-    keywords=['Conflux', 'base32'],
+    keywords=['Conflux', 'base32', 'address'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Education",
