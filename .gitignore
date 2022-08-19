@@ -1,7 +1,13 @@
 .pytest_cache
 venv
-tests/__pycache__
+**/__pycache__
 .idea
 build
 dist
 cfx_address.egg-info
+.vscode
+.hypothesis
+note.ipynb
+note.md
+docs/_build/
+*/.DS_STORE

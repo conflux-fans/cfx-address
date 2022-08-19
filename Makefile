@@ -1,11 +1,22 @@
-TAG = 1.0.0
-
 .PHONY: all build push
 
 all: build
 
-build:
+clean:
+	rm -rf dist/
+
+build: clean
 	python3 setup.py sdist bdist_wheel
 
-publish:
-	twine upload dist/cfx-address-${TAG}*
+publish: 
+	twine upload dist/* --repository cfx-address
+
+gen-docs:
+	cd ./docs && \
+	sphinx-apidoc -o ./source ../cfx_address -f -M --separate && \
+	make html
+
+test:
+	pytest tests 
+	cd ./docs && make doctest
+	
