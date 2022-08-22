@@ -1,5 +1,7 @@
 from typing import (
-    Any
+    Optional,
+    Union,
+    cast
 )
 
 from cfx_address._utils import (
@@ -10,12 +12,32 @@ from cfx_address._utils import (
 from cfx_address.address import (
     Base32Address
 )
-# from eth_utils.address import (
-#     is_hex_address
-# )
+from eth_utils.address import (
+    is_hex_address
+)
+from cfx_utils.types import (
+    HexAddress
+)
 
 validate_base32 = Base32Address.validate
 is_valid_base32 = Base32Address.is_valid_base32
+
+def normalize_to(
+    address: str, network_id:Optional[int] = None
+) -> Union[Base32Address, HexAddress]:  
+    """
+    normalize a hex or base32 address to target network or hex address
+
+    :param str address: a base32 address or hex address
+    :param Optional[int] network_id: target network id, defaults to None(and will return hex address)
+    :return Union[Base32Address, HexAddress]: a normalized base32 address or hex address, depending on network id
+    """    
+    if network_id is not None:
+        return Base32Address(address, network_id)
+    else:
+        if is_hex_address(address):
+            return cast(HexAddress, address)
+        return Base32Address(address).hex_address
 
 # def is_valid_address(value: str) -> bool:
 #     """
