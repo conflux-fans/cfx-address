@@ -24,13 +24,13 @@ validate_base32 = Base32Address.validate
 is_valid_base32 = Base32Address.is_valid_base32
 
 def normalize_to(
-    address: str, network_id:Optional[int] = None, verbose=False
+    address: str, network_id:Union[int, None], verbose=False
 ) -> Union[Base32Address, HexAddress]:  
     """
     normalize a hex or base32 address to target network or hex address
 
     :param str address: a base32 address or hex address
-    :param Optional[int] network_id: target network id, defaults to None(and will return hex address)
+    :param Union[int, None] network_id: target network id. None will return hex address
     :return Union[Base32Address, HexAddress]: a normalized base32 address or hex address, depending on network id
     """    
     if network_id is not None:
