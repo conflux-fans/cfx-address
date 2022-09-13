@@ -7,6 +7,11 @@ from typing import (
     get_args
 )
 
+import functools
+from ctypes import (
+    ArgumentError
+)
+
 from hexbytes import HexBytes
 from eth_typing.evm import (
     ChecksumAddress,
@@ -81,11 +86,12 @@ class Base32Address(str):
     ['user', 1, '0x1ecde7223747601823f7535d7968ba98b4881e09', 'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4', 'cfxtest:aat...95j4', '0x349f086998cF4a0C5a00b853a0E93239D81A97f6', '0x1ECdE7223747601823f7535d7968Ba98b4881E09']
     """    
     
-    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False) -> "Base32Address":
+    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: bool = False, from_trusted_source: bool = False) -> "Base32Address":
         """
         :param Union[Base32Address, HexAddress, str] address: a base32-or-hex format address
         :param Optional[int] network_id: target address network_id. Optional if first argument is a base32 address, but required for hex address
         :param bool verbose: whether the return value will be encoded in verbose mode, defaults to False
+        :param bool from_trusted_source: whether the value is a verified Base32Address, defaults to False
         :raises InvalidAddress: address is neither base32 address nor hex address
         :raises InvalidNetworkId: network_id argument is not a positive integer or is None when address argument is a hex address
         :return Base32Address: an encoded base32 object, which can be trivially used as python str
@@ -101,6 +107,10 @@ class Base32Address(str):
         >>> isinstance(address_, str)
         True
         """
+        if from_trusted_source:
+            if network_id is not None or verbose is not None:
+                raise ArgumentError("wrong argument: network_id and verbose should be None if from_trusted_source is True")
+            return str.__new__(cls, address)
         try:
             parts = cls.decode(address)
             if network_id is None:
@@ -138,7 +148,7 @@ class Base32Address(str):
     def __hash__(self) -> int:
         return super().__hash__()
 
-    @property
+    @functools.cached_property
     def network_id(self) -> int:
         """
         :return int: network_id of the address
@@ -150,7 +160,7 @@ class Base32Address(str):
         """        
         return Base32Address._decode_network_id(self)
 
-    @property
+    @functools.cached_property
     def hex_address(self) -> HexAddress:
         """
         :return HexAddress: hex address of the address.
@@ -161,10 +171,10 @@ class Base32Address(str):
         """        
         return Base32Address._decode_hex_address(self)
 
-    @property
+    @functools.cached_property
     def address_type(self) -> AddressType:
         """
-        :return AddressType: address type of an address
+        :return Literal["null", "builtin", "user", "contract", "invalid"]: address type of an address. 
         
         :examples:
         
@@ -174,7 +184,7 @@ class Base32Address(str):
         """      
         return Base32Address._detect_address_type(hex_address_bytes(self.hex_address))
 
-    @property
+    @functools.cached_property
     def eth_checksum_address(self) -> ChecksumAddress:
         """
         :return ChecksumAddress: self.hex_address in ethereum checksum address format
@@ -187,7 +197,7 @@ class Base32Address(str):
         """        
         return to_checksum_address(self.hex_address)
 
-    @property
+    @functools.cached_property
     def verbose_address(self) -> "Base32Address":
         """
         :return Base32Address: self presented in verbose mode
@@ -198,7 +208,7 @@ class Base32Address(str):
         """        
         return Base32Address.encode(self.hex_address, self.network_id, True)
     
-    @property
+    @functools.cached_property
     def abbr(self) -> str:
         """
         :return str: abbreviation of the address, as mentioned in https://forum.conflux.fun/t/voting-results-for-new-address-abbreviation-standard/7131
@@ -212,7 +222,7 @@ class Base32Address(str):
         """        
         return Base32Address._shorten_base32_address(self)
     
-    @property
+    @functools.cached_property
     def compressed_abbr(self) -> str:
         """
         :return str: compressed abbreviation of the address, same as property "abbr" except for mainnet address
@@ -227,7 +237,7 @@ class Base32Address(str):
         """ 
         return Base32Address._shorten_base32_address(self, True)
     
-    @property
+    @functools.cached_property
     def mapped_evm_space_address(self) -> HexAddress:
         """
         :return HexAddress: the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
