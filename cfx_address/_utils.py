@@ -30,6 +30,10 @@ def public_key_to_cfx_hex(public_key: Union[str, bytes]) -> HexAddress:
     
     :param Union[str, bytes] public_key: str or bytes representation of public key
     :return HexAddress: Hex representation of the correspondign hex address
+    
+    
+    >>> public_key_to_cfx_hex("0xdacdaeba8e391e7649d3ac4b5329ca0e202d38facd928d88b5f729b89a497e43cc4ad3816fcfdb241497b3b43862afb4c899bc284bf60feca4ee66ff868d1feb")
+    '0x152d251c36aec31072b90a85b95bf9435b07edb8'
     """    
     public_key = HexBytes(public_key)
     # only EOA has a corresponding public key

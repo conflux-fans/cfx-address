@@ -168,6 +168,9 @@ class Base32Address(str):
         :param int network_id: network id of the return Base32Address, defaults to None
         :param bool verbose: whether the address will be represented in verbose mode, defaults to False
         :return Base32Address: Base32 representation of the address
+        
+        >>> Base32Address.from_public_key("0xdacdaeba8e391e7649d3ac4b5329ca0e202d38facd928d88b5f729b89a497e43cc4ad3816fcfdb241497b3b43862afb4c899bc284bf60feca4ee66ff868d1feb", 1)
+        'cfxtest:aamw4kj6g41pgedw1efjnsm59fbz0b9r1awbp8k2p2'
         """
         hex_address = public_key_to_cfx_hex(public_key)
         return cls(hex_address, network_id, verbose)
