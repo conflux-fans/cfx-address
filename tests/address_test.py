@@ -41,6 +41,9 @@ mapped_evm_space_address = "0x349f086998cF4a0C5a00b853a0E93239D81A97f6"
 eoa_address = "0xd43d2a93e97245E290feE74276a1EF8D275bE646"
 # converted_address = "0x143d2a93e97245e290fee74276a1ef8d275be646"
 
+pk = "0xdacdaeba8e391e7649d3ac4b5329ca0e202d38facd928d88b5f729b89a497e43cc4ad3816fcfdb241497b3b43862afb4c899bc284bf60feca4ee66ff868d1feb"
+pk_address = "0x152d251c36aec31072b90a85b95bf9435b07edb8"
+
 def test_validation():
     assert Base32Address.is_valid_base32(testnet_address)
     assert Base32Address.is_valid_base32(mainnet_address)
@@ -111,3 +114,27 @@ def test_instance():
     # test __eq__
     assert instance == testnet_verbose_address
     assert instance == testnet_address
+
+
+def test_init_from_trusted():
+    instance = Base32Address(testnet_verbose_address, _from_trust=True)
+    assert isinstance(instance, Base32Address)
+    assert isinstance(instance.eth_checksum_address, str)
+    assert instance.network_id == 1
+    assert instance.hex_address == hex_address
+    assert instance.eth_checksum_address == checksum_address
+    assert instance.verbose_address == testnet_verbose_address
+    assert instance.address_type == "user"
+    assert instance.abbr == shortened_testnet_address
+    assert instance.mapped_evm_space_address == mapped_evm_space_address
+    
+    assert Base32Address(mainnet_verbose_address, None, True).abbr == shortened_mainnet_address
+    assert Base32Address(mainnet_verbose_address, None).compressed_abbr == compressed_shortened_mainnet_address
+    
+    # test __eq__
+    assert instance == testnet_verbose_address
+    assert instance == testnet_address
+
+def test_init_from_public_key():
+    instance = Base32Address.from_public_key(pk, 1)
+    assert instance == Base32Address(pk_address, 1)

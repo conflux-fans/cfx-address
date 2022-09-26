@@ -1,10 +1,21 @@
 # utils do not rely on other modules are defined here to avoid recursive import
-from typing import Any, Literal
+from typing import (
+    Any,
+    Literal,
+    Union,
+    cast,
+)
+from hexbytes import (
+    HexBytes,
+)
 
 from cfx_utils.exceptions import (
     InvalidNetworkId,
     InvalidHexAddress, 
     
+)
+from eth_utils.crypto import (
+    keccak
 )
 from eth_utils.address import (
     is_hex_address
@@ -12,6 +23,22 @@ from eth_utils.address import (
 from eth_typing.evm import (
     HexAddress,
 )
+
+def public_key_to_cfx_hex(public_key: Union[str, bytes]) -> HexAddress:
+    """
+    return the corresponding hex address of a public key in conflux: "0x1" + keccak(pk).hex()[-39]
+    
+    :param Union[str, bytes] public_key: str or bytes representation of public key
+    :return HexAddress: Hex representation of the correspondign hex address
+    
+    
+    >>> public_key_to_cfx_hex("0xdacdaeba8e391e7649d3ac4b5329ca0e202d38facd928d88b5f729b89a497e43cc4ad3816fcfdb241497b3b43862afb4c899bc284bf60feca4ee66ff868d1feb")
+    '0x152d251c36aec31072b90a85b95bf9435b07edb8'
+    """    
+    public_key = HexBytes(public_key)
+    # only EOA has a corresponding public key
+    address = "0x1" + keccak(public_key).hex()[-39:]
+    return cast(HexAddress, address)
 
 def eth_eoa_address_to_cfx_hex(eoa_address: str) -> HexAddress:
     """
@@ -30,11 +57,6 @@ def eth_eoa_address_to_cfx_hex(eoa_address: str) -> HexAddress:
     """
     validate_hex_address(eoa_address)
     return '0x1' + eoa_address.lower()[3:] # type: ignore
-
-
-def hex_address_bytes(hex_address: str) -> bytes:
-    assert type(hex_address) == str
-    return bytes.fromhex(hex_address.lower().replace('0x', ""))
 
 def validate_network_id(network_id: Any) -> Literal[True]:
     """

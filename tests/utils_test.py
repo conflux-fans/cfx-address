@@ -1,7 +1,16 @@
+import pytest
 from cfx_address.utils import (
     eth_eoa_address_to_cfx_hex,
-    normalize_to
+    normalize_to,
+    validate_address_agaist_network_id
     # is_valid_address,
+)
+from cfx_address import (
+    Base32Address
+)
+from cfx_utils.exceptions import (
+    AddressNotMatch,
+    Base32AddressNotMatch
 )
 
 eoa_address = "0xd43d2a93e97245E290feE74276a1EF8D275bE646"
@@ -25,3 +34,13 @@ def test_normalize():
     assert normalize_to(testnet_verbose_address, 1029) == mainnet_address
     assert normalize_to(hex_address, None) == hex_address
     assert normalize_to(hex_address, 1) == testnet_verbose_address
+    
+def test_validate_against_network_id():
+    address = Base32Address.zero_address(1)
+    assert validate_address_agaist_network_id(address, 1)
+    assert validate_address_agaist_network_id(address.hex_address, 1, True)
+    assert validate_address_agaist_network_id(address, None)
+    with pytest.raises(AddressNotMatch):
+        validate_address_agaist_network_id(address.hex_address, None)
+    with pytest.raises(Base32AddressNotMatch):
+        validate_address_agaist_network_id(address, 1029)

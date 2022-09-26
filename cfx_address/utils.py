@@ -1,21 +1,28 @@
 from typing import (
     Optional,
     Union,
-    cast
+    cast,
+    Literal,
+)
+
+from eth_utils.address import (
+    is_hex_address,
 )
 
 from cfx_address._utils import (
     validate_hex_address,
     validate_network_id,
-    eth_eoa_address_to_cfx_hex
+    eth_eoa_address_to_cfx_hex,
+    public_key_to_cfx_hex,
 )
 from cfx_address.address import (
     Base32Address
 )
-from eth_utils.address import (
-    is_hex_address,
-)
 
+from cfx_utils.exceptions import (
+    Base32AddressNotMatch,
+    AddressNotMatch,
+)
 from cfx_utils.types import (
     HexAddress,
 )
@@ -38,16 +45,54 @@ def normalize_to(
     else:
         if is_hex_address(address):
             return cast(HexAddress, address)
+        # error will be raised if address is not a Base32Address
         return Base32Address(address).hex_address
 
-# def is_valid_address(value: str) -> bool:
-#     """
-#     checks if a value is a valid string-typed address, either hex address or base32 address is ok
+def validate_address_agaist_network_id(address: str, network_id: Union[int, None], accept_hex: Optional[bool]=False) -> Literal[True]:
+    """
+    Validate address in specific network context. Error will be raised only if:
+        1. address validity checking: 
+            address is a base32 address or hex / base32 address if accept_hex
+        2. network id validity checking: 
+            the network id of the address should be same as network_id, this step will be skipped if address is hex address or network_id is None
 
-#     :param Any value: value to check
-#     :return bool: True if valid, otherwise False
-#     """    
-#     return is_hex_address(value) or is_valid_base32(value)
+    :param str address: address to validate
+    :param Union[int, None] network_id: if is None, then network id checking will be skipped
+    :param Optional[bool] accept_hex: whether a hex address is accepted, if. Defaults to False
+    :raises AddressNotMatch: hex address is received when accept_hex is not True
+    :raises Base32AddressNotMatch: the network id of address does not equal to network_id
+    :return Literal[True]: returns True if no exceptions are raised
+    
+    >>> from cfx_address.utils import validate_address_agaist_network_id
+    >>> address = Base32Address.zero_address(1)
+    >>> validate_address_agaist_network_id(address, 1)
+    True
+    >>> validate_address_agaist_network_id(address.hex_address, 1, True)
+    True
+    >>> validate_address_agaist_network_id(address, None)
+    True
+    >>> validate_address_agaist_network_id(address.hex_address, None)
+    Traceback (most recent call last):
+        ...
+    cfx_utils.exceptions.AddressNotMatch: hex address is not accepted
+    >>> validate_address_agaist_network_id(address, 1029)
+    Traceback (most recent call last):
+        ...
+    cfx_utils.exceptions.Base32AddressNotMatch: expects address of network id 1029, receives address of network id 1
+    
+    """    
+    if is_hex_address(address):
+        if accept_hex:
+            return True
+        raise AddressNotMatch("hex address is not accepted")
+    else:
+        # the address is Base32Address (or invalid)
+        address_network_id = Base32Address.decode(address)["network_id"]
+        if address_network_id == network_id or network_id is None:
+            return True
+        raise Base32AddressNotMatch(f"expects address of network id {network_id}, "
+                                    f"receives address of network id {address_network_id}")
+
 
 __all__ = [
     "validate_hex_address",
@@ -55,5 +100,6 @@ __all__ = [
     "eth_eoa_address_to_cfx_hex",
     "validate_base32",
     "is_valid_base32",
+    "validate_address_agaist_network_id",
     # "is_hex_address"
 ]
