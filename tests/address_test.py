@@ -111,3 +111,23 @@ def test_instance():
     # test __eq__
     assert instance == testnet_verbose_address
     assert instance == testnet_address
+
+
+def test_init_from_trusted():
+    instance = Base32Address(testnet_verbose_address, _from_trust=True)
+    assert isinstance(instance, Base32Address)
+    assert isinstance(instance.eth_checksum_address, str)
+    assert instance.network_id == 1
+    assert instance.hex_address == hex_address
+    assert instance.eth_checksum_address == checksum_address
+    assert instance.verbose_address == testnet_verbose_address
+    assert instance.address_type == "user"
+    assert instance.abbr == shortened_testnet_address
+    assert instance.mapped_evm_space_address == mapped_evm_space_address
+    
+    assert Base32Address(mainnet_verbose_address, None, True).abbr == shortened_mainnet_address
+    assert Base32Address(mainnet_verbose_address, None).compressed_abbr == compressed_shortened_mainnet_address
+    
+    # test __eq__
+    assert instance == testnet_verbose_address
+    assert instance == testnet_address
