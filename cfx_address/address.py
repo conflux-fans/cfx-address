@@ -12,7 +12,9 @@ from ctypes import (
     ArgumentError
 )
 
-from hexbytes import HexBytes
+from hexbytes import (
+    HexBytes
+)
 from eth_typing.evm import (
     ChecksumAddress,
     HexAddress,
@@ -29,7 +31,6 @@ from cfx_address import (
     base32
 )
 from cfx_address._utils import (
-    hex_address_bytes,
     validate_hex_address,
     validate_network_id
 )
@@ -61,6 +62,9 @@ from cfx_address.consts import (
     
     VERSION_BYTE,
     CHECKSUM_TEMPLATE,
+)
+from cfx_address._utils import (
+    public_key_to_cfx_hex
 )
 
 
@@ -144,11 +148,29 @@ class Base32Address(str):
         >>> assert "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4" == address
         >>> assert "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4" == address
         """
-        parts = Base32Address.decode(_address)
+        parts = self.__class__.decode(_address)
         return self.hex_address == parts["hex_address"] and self.network_id == parts["network_id"]
 
     def __hash__(self) -> int:
         return super().__hash__()
+
+    @classmethod
+    def from_public_key(
+        cls, 
+        public_key: Union[str, bytes],
+        network_id: int,
+        verbose: bool = False
+    ) -> "Base32Address":
+        """
+        create a Base32Address from public key
+
+        :param Union[str, bytes] public_key: str or bytes representation of public key
+        :param int network_id: network id of the return Base32Address, defaults to None
+        :param bool verbose: whether the address will be represented in verbose mode, defaults to False
+        :return Base32Address: Base32 representation of the address
+        """
+        hex_address = public_key_to_cfx_hex(public_key)
+        return cls(hex_address, network_id, verbose)
 
     @functools.cached_property
     def network_id(self) -> int:
@@ -160,7 +182,7 @@ class Base32Address(str):
         >>> address.network_id
         1
         """        
-        return Base32Address._decode_network_id(self)
+        return self.__class__._decode_network_id(self)
 
     @functools.cached_property
     def hex_address(self) -> HexAddress:
@@ -171,7 +193,7 @@ class Base32Address(str):
         >>> address.hex_address
         '0x1ecde7223747601823f7535d7968ba98b4881e09'
         """        
-        return Base32Address._decode_hex_address(self)
+        return self.__class__._decode_hex_address(self)
 
     @functools.cached_property
     def address_type(self) -> AddressType:
@@ -184,7 +206,7 @@ class Base32Address(str):
         >>> address.address_type
         'user'
         """      
-        return Base32Address._detect_address_type(hex_address_bytes(self.hex_address))
+        return self.__class__._detect_address_type(HexBytes(self.hex_address))
 
     @functools.cached_property
     def eth_checksum_address(self) -> ChecksumAddress:
@@ -208,7 +230,7 @@ class Base32Address(str):
         >>> address.verbose_address
         'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4'
         """        
-        return Base32Address.encode(self.hex_address, self.network_id, True)
+        return self.__class__.encode(self.hex_address, self.network_id, True)
     
     @functools.cached_property
     def abbr(self) -> str:
@@ -222,7 +244,7 @@ class Base32Address(str):
         >>> Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu").abbr
         'cfx:aat...7ggp3vpu'
         """        
-        return Base32Address._shorten_base32_address(self)
+        return self.__class__._shorten_base32_address(self)
     
     @functools.cached_property
     def compressed_abbr(self) -> str:
@@ -237,7 +259,7 @@ class Base32Address(str):
         >>> address.compressed_abbr
         'cfx:aat...3vpu'
         """ 
-        return Base32Address._shorten_base32_address(self, True)
+        return self.__class__._shorten_base32_address(self, True)
     
     @functools.cached_property
     def mapped_evm_space_address(self) -> HexAddress:
@@ -248,7 +270,7 @@ class Base32Address(str):
         >>> address.mapped_evm_space_address
         '0x349f086998cF4a0C5a00b853a0E93239D81A97f6'
         """
-        return Base32Address._mapped_evm_address_from_hex(self.hex_address)
+        return self.__class__._mapped_evm_address_from_hex(self.hex_address)
 
     @classmethod
     def encode(
@@ -271,14 +293,14 @@ class Base32Address(str):
         """ 
         validate_hex_address(hex_address)
         validate_network_id(network_id)
-        return Base32Address(hex_address, network_id, verbose)
+        return cls(hex_address, network_id, verbose)
 
     @classmethod
     def _encode(
         cls, hex_address: str, network_id: int, verbose: bool=False
     ) -> str:
         network_prefix = cls._encode_network_prefix(network_id)
-        address_bytes = hex_address_bytes(hex_address)
+        address_bytes = HexBytes(hex_address)
         payload = base32.encode(VERSION_BYTE + address_bytes)
         checksum = cls._create_checksum(network_prefix, payload)
         parts = [network_prefix]
@@ -310,13 +332,6 @@ class Base32Address(str):
         address_buf = base32.decode(payload)
         hex_buf = address_buf[1:21]
         return HEX_PREFIX + hex_buf.hex() # type: ignore
-
-    # @classmethod
-    # def _decode_address_type(cls, base32_address: str) -> AddressType:
-    #     base32_address = base32_address.lower()
-    #     hex_address = cls._decode_hex_address(base32_address)
-    #     address_type = cls._detect_address_type(hex_address_bytes(hex_address))
-    #     return address_type
     
     @classmethod
     def decode(cls, base32_address: str) -> Base32AddressParts:
@@ -381,7 +396,7 @@ class Base32Address(str):
             
             # check checksum
             hex_address = address_parts["hex_address"]
-            address_bytes = hex_address_bytes(hex_address)
+            address_bytes = HexBytes(hex_address)
             payload = base32.encode(VERSION_BYTE + address_bytes)
             checksum = cls._create_checksum(splits[0], payload)
             if checksum != base32_address[-8:]:
@@ -404,7 +419,7 @@ class Base32Address(str):
         parts = base32_address.split(DELIMITER)
         network_id = cls._network_prefix_to_id(parts[0])
         hex_address = cls._payload_to_hex(parts[-1])
-        address_type = cls._detect_address_type(hex_address_bytes(hex_address))
+        address_type = cls._detect_address_type(HexBytes(hex_address))
         return {
             "network_id": network_id,
             "hex_address": hex_address,
@@ -447,7 +462,7 @@ class Base32Address(str):
         :raises InvalidBase32Address: either address is not a valid base32 address
         :return bool: whether two addresses share same hex_address and network_id
         """
-        return Base32Address(address1) == address2
+        return cls(address1) == address2
     
     @classmethod
     def zero_address(cls, network_id: int, verbose: bool = False) -> "Base32Address":    

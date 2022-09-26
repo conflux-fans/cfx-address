@@ -12,7 +12,8 @@ from eth_utils.address import (
 from cfx_address._utils import (
     validate_hex_address,
     validate_network_id,
-    eth_eoa_address_to_cfx_hex
+    eth_eoa_address_to_cfx_hex,
+    public_key_to_cfx_hex,
 )
 from cfx_address.address import (
     Base32Address
