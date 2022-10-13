@@ -90,12 +90,13 @@ class Base32Address(str):
     ['user', 1, '0x1ecde7223747601823f7535d7968ba98b4881e09', 'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4', 'cfxtest:aat...95j4', '0x349f086998cF4a0C5a00b853a0E93239D81A97f6', '0x1ECdE7223747601823f7535d7968Ba98b4881E09']
     """    
     
-    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: Optional[bool] = None, _from_trust: bool = False) -> "Base32Address":
+    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=None, verbose: Optional[bool] = None, *, _from_trust: bool = False, _ignore_invalid_type: bool = False) -> "Base32Address":
         """
         :param Union[Base32Address, HexAddress, str] address: a base32-or-hex format address
         :param Optional[int] network_id: target address network_id. Optional if first argument is a base32 address, but required for hex address
         :param Optional[bool] verbose: whether the return value will be encoded in verbose mode, defaults to None (will be viewed as None)
         :param bool _from_trust: whether the value is a verified Base32Address, if true, network_id and verbose option should be None, and the verification and encoding process will be skipped. Not recommended to set unless preformance is critical. Defaults to False
+        :param bool _ignore_invalid_type: whether the address type is validated, defaults to False
         :raises InvalidAddress: address is neither base32 address nor hex address
         :raises InvalidNetworkId: network_id argument is not a positive integer or is None when address argument is a hex address
         :return Base32Address: an encoded base32 object, which can be trivially used as python str, specially, if from_trusted_source is true, the input value will be directly used as the encoded value
@@ -120,14 +121,14 @@ class Base32Address(str):
         try:
             parts = cls.decode(address)
             if network_id is None:
-                val = cls._encode(parts["hex_address"], parts["network_id"], verbose)
+                val = cls._encode(parts["hex_address"], parts["network_id"], verbose, _ignore_invalid_type=_ignore_invalid_type)
             else:
-                validate_network_id(network_id)    
-                val = cls._encode(parts["hex_address"], network_id, verbose)
+                validate_network_id(network_id)  
+                val = cls._encode(parts["hex_address"], network_id, verbose, _ignore_invalid_type=_ignore_invalid_type)
         except InvalidBase32Address:
             if is_hex_address(address):
                 validate_network_id(network_id)
-                val = cls._encode(address, network_id, verbose) # type: ignore
+                val = cls._encode(address, network_id, verbose, _ignore_invalid_type=_ignore_invalid_type) # type: ignore
             else:
                 raise InvalidAddress("Address should be either base32 or hex, "
                                 f"receives {address}")
@@ -277,7 +278,7 @@ class Base32Address(str):
 
     @classmethod
     def encode(
-        cls, hex_address: str, network_id: int, verbose: bool=False
+        cls, hex_address: str, network_id: int, verbose: bool=False, *, _ignore_invalid_type=False
     ) -> "Base32Address":
         """
         encode hex address to base32 address
@@ -285,6 +286,7 @@ class Base32Address(str):
         :param str hex_address: hex address begins with 0x
         :param int network_id: address network id, e.g., 1 for testnet and 1029 for mainnet
         :param bool verbose: whether the address will be presented in verbose mode, defaults to False
+        :param bool _ignore_invalid_type: whether the address type is validated, defaults to False
         :return Base32Address: an encoded base32 object, which can be trivially used as python str
         
         :examples:
@@ -296,11 +298,11 @@ class Base32Address(str):
         """ 
         validate_hex_address(hex_address)
         validate_network_id(network_id)
-        return cls(hex_address, network_id, verbose)
+        return cls(hex_address, network_id, verbose, _ignore_invalid_type=_ignore_invalid_type)
 
     @classmethod
     def _encode(
-        cls, hex_address: str, network_id: int, verbose: bool=False
+        cls, hex_address: str, network_id: int, verbose: bool=False, *, _ignore_invalid_type: bool=False
     ) -> str:
         network_prefix = cls._encode_network_prefix(network_id)
         address_bytes = HexBytes(hex_address)
@@ -308,8 +310,9 @@ class Base32Address(str):
         checksum = cls._create_checksum(network_prefix, payload)
         parts = [network_prefix]
         address_type = cls._detect_address_type(address_bytes)
-        if address_type == TYPE_INVALID:
-            raise InvalidConfluxHexAddress
+        if address_type == TYPE_INVALID and not _ignore_invalid_type:
+            raise InvalidConfluxHexAddress(f"The hex address should start with 0x0, 0x1 or 0x8, received {hex_address}."
+                                        "Check your code logic or set _ignore_invalid_type=True")
         if verbose:
             parts.append(f"{TYPE}.{address_type}")
         parts.append(payload + checksum)
@@ -373,9 +376,10 @@ class Base32Address(str):
 
             # check address type
             address_type = address_parts["address_type"]
-            if address_type == TYPE_INVALID:
-                raise InvalidBase32Address(f"Invalid address type: the hex address of the provided address is {address_parts['hex_address']}, "
-                                        "while valid conflux address is supposed to start with 0x0, 0x1 or 0x8")
+            # it is ok to decode an address whose type is invalid
+            # if address_type == TYPE_INVALID:
+            #     raise InvalidBase32Address(f"Invalid address type: the hex address of the provided address is {address_parts['hex_address']}, "
+            #                             "while valid conflux address is supposed to start with 0x0, 0x1 or 0x8")
             
             """
             cip-37 #Decoding
