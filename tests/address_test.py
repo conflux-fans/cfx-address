@@ -23,6 +23,7 @@ shortened_mainnet_address = "cfx:aat...7ggp3vpu"
 compressed_shortened_mainnet_address = "cfx:aat...3vpu"
 custom_net_address = "net8888:aatp533cg7d0agbd87kz48nj1mpnkca8beh6tx5zc7"
 
+invalid_hex_address= "0x252d251c36aec31072b90a85b95bf9435b07edb8"
 invalid_type_address = "CFX:TYPE.NULL:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU"
 invalid_net_address = "ETH:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4"
 mixed_testnet_address = "CFXTEST:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4"
@@ -134,6 +135,15 @@ def test_init_from_trusted():
     # test __eq__
     assert instance == testnet_verbose_address
     assert instance == testnet_address
+
+def test_init_from_invalid_type():
+    with pytest.raises(InvalidConfluxHexAddress):
+        instance = Base32Address(invalid_hex_address, 1)
+    with pytest.raises(InvalidConfluxHexAddress):
+        Base32Address.encode(invalid_hex_address, 1)
+    Base32Address.encode(invalid_hex_address, 1, _ignore_invalid_type=True)
+    instance = Base32Address(invalid_hex_address, 1, True, _ignore_invalid_type=True)
+    assert instance.address_type == "invalid"
 
 def test_init_from_public_key():
     instance = Base32Address.from_public_key(pk, 1)
