@@ -1,5 +1,9 @@
 # changlog
 
+## 1.0.0-beta.12
+
+* Fix bug that `obj1 == obj2` is not equivalent to `not obj1 != obj2`
+
 ## 1.0.0-beta.11
 
 * Fix `Base32Address.__eq__` comparison problem when the address to compare is not a str-typed object

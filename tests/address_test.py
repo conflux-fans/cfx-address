@@ -75,10 +75,13 @@ def test_encode():
     with pytest.raises(InvalidConfluxHexAddress):
         Base32Address.encode(eoa_address, 1)
 
-
-def test_equals():
+def test_equals_and_ne():
     assert Base32Address.equals(testnet_address, testnet_verbose_address)
     assert not Base32Address.equals(testnet_address, mainnet_address)
+    assert not Base32Address(testnet_address) != testnet_verbose_address
+    assert not testnet_verbose_address != Base32Address(testnet_address)
+    assert not testnet_address != Base32Address(testnet_verbose_address)
+    assert not Base32Address(testnet_verbose_address) != testnet_address
     assert Base32Address(testnet_address) != object()
 
 def test_zero_address():
