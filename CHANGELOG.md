@@ -1,5 +1,10 @@
 # changlog
 
+## 1.0.0-beta.11
+
+* Fix `Base32Address.__eq__` comparison problem when the address to compare is not a str-typed object
+* improve `utils.normalize_to` type hint
+
 ## 1.0.0-beta.10
 
 * Add `_ignore_invalid_type` from address initialization from initialization and `Base32Address.encode`

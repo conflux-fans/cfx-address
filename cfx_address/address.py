@@ -135,11 +135,11 @@ class Base32Address(str):
         
         return str.__new__(cls, val)
     
-    def __eq__(self, _address: str) -> bool:
+    def __eq__(self, _address: object) -> bool:
         """
-        invoked when a base32 address is compared to another string (or Base32Address typed object),
+        invoked when a base32 address is compared to another object (or Base32Address typed object),
         
-        :param str __address: value compared to 
+        :param str _address: value compared to, which is supposed to be encoded in Base32 format (else return false)
         :return bool: True if self and _address are of same hex_address and network_id
         :raises InvalidBase32Address: _address is not encoded in base32 format
         :examples:
@@ -149,8 +149,11 @@ class Base32Address(str):
         >>> assert "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4" == address
         >>> assert "cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4" == address
         """
-        parts = self.__class__.decode(_address)
-        return self.hex_address == parts["hex_address"] and self.network_id == parts["network_id"]
+        try:
+            parts = self.__class__.decode(_address) # type: ignore
+            return self.hex_address == parts["hex_address"] and self.network_id == parts["network_id"]
+        except:
+            return False
 
     def __hash__(self) -> int:
         return super().__hash__()
@@ -368,7 +371,7 @@ class Base32Address(str):
             splits = base32_address.split(DELIMITER)
             if len(splits) != 2 and len(splits) != 3:
                 raise InvalidBase32Address(
-                    "Address needs to be encode in Base32 format, such as cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaajrwuc9jnb\n"
+                    "Address needs to be encode in Base32 format, such as cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaajrwuc9jnb. "
                     "Received: {}".format(base32_address))
 
             # if exception occurs, outer try-except will handle
@@ -469,7 +472,7 @@ class Base32Address(str):
         :raises InvalidBase32Address: either address is not a valid base32 address
         :return bool: whether two addresses share same hex_address and network_id
         """
-        return cls(address1) == address2
+        return cls(address1) == cls(address2)
     
     @classmethod
     def zero_address(cls, network_id: int, verbose: bool = False) -> "Base32Address":    
