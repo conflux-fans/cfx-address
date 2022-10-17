@@ -3,6 +3,7 @@ from typing import (
     Union,
     cast,
     Literal,
+    overload,
 )
 
 from eth_utils.address import (
@@ -29,6 +30,14 @@ from cfx_utils.types import (
 
 validate_base32 = Base32Address.validate
 is_valid_base32 = Base32Address.is_valid_base32
+
+@overload
+def normalize_to(address: str, network_id: None, verbose=False) -> HexAddress:
+    ...
+
+@overload
+def normalize_to(address: str, network_id: int, verbose=False) -> Base32Address:
+    ...
 
 def normalize_to(
     address: str, network_id:Union[int, None], verbose=False

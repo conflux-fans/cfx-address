@@ -79,6 +79,7 @@ def test_encode():
 def test_equals():
     assert Base32Address.equals(testnet_address, testnet_verbose_address)
     assert not Base32Address.equals(testnet_address, mainnet_address)
+    assert Base32Address(testnet_address) != object()
 
 def test_zero_address():
     assert str(Base32Address.zero_address(1)) == "cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw"
