@@ -154,6 +154,9 @@ class Base32Address(str):
             return self.hex_address == parts["hex_address"] and self.network_id == parts["network_id"]
         except:
             return False
+        
+    def __ne__(self, _address: object) -> bool:
+        return not (self == _address)
 
     def __hash__(self) -> int:
         return super().__hash__()
