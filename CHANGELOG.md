@@ -1,5 +1,10 @@
 # changlog
 
+## 1.0.0-beta.13 (intended)
+
+* Mypy integration and support
+* support default network id
+
 ## 1.0.0-beta.12
 
 * Fix bug that `obj1 == obj2` is not equivalent to `not obj1 != obj2`
