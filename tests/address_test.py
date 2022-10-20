@@ -1,6 +1,7 @@
 import pytest
 from cfx_address.address import (
     Base32Address,
+    get_base32_address_factory,
 )
 from cfx_utils.exceptions import (
     InvalidNetworkId,
@@ -152,3 +153,18 @@ def test_init_from_invalid_type():
 def test_init_from_public_key():
     instance = Base32Address.from_public_key(pk, 1)
     assert instance == Base32Address(pk_address, 1)
+
+def test_with_default_network_id():
+    Base32Address.default_network_id = 1
+    assert Base32Address.default_network_id == 1
+    assert Base32Address(mainnet_address) == testnet_address
+    assert Base32Address(hex_address) == testnet_address
+    assert Base32Address(hex_address) == testnet_address
+    assert Base32Address.zero_address() == "cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw"
+    assert Base32Address.encode(hex_address) == testnet_address
+
+def test_base32_address_factory():
+    testnet_factory = get_base32_address_factory(1)
+    mainnet_factory = get_base32_address_factory(1029)
+    assert testnet_factory(hex_address) == testnet_address
+    assert mainnet_factory(hex_address) == mainnet_address
