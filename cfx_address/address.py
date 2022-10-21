@@ -122,7 +122,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     """
     _default_network_id: ClassVar[Optional[int]] = None
     
-    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=default, verbose: Optional[bool] = None, *, _from_trust: bool = False, _ignore_invalid_type: bool = False) -> "Base32Address":
+    def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=cast(int, default), verbose: Optional[bool] = None, *, _from_trust: bool = False, _ignore_invalid_type: bool = False) -> "Base32Address":
         """
         :param Union[Base32Address, HexAddress, str] address: a base32-or-hex format address
         :param Optional[int] network_id: target network_id of the address, defaults to `Base32Address.default_network_id`. Can be None if first argument is a base32 address, which means don't change network id
@@ -322,8 +322,8 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return self.__class__._mapped_evm_address_from_hex(self.hex_address)
 
     @classmethod
-    def encode(
-        cls, hex_address: str, network_id: int=default, verbose: bool=False, *, _ignore_invalid_type=False
+    def encode( # type: ignore
+        cls, hex_address: str, network_id: int=cast(int, default), verbose: bool=False, *, _ignore_invalid_type: bool=False
     ) -> "Base32Address":
         """
         encode hex address to base32 address
@@ -342,7 +342,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         'CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU'
         """ 
         if network_id is default:
-            network_id = cls.default_network_id
+            network_id = cast(int, cls.default_network_id)
         validate_hex_address(hex_address)
         validate_network_id(network_id)
         return cls(hex_address, network_id, verbose, _ignore_invalid_type=_ignore_invalid_type)
@@ -519,7 +519,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return cls(address1) == cls(address2)
     
     @classmethod
-    def zero_address(cls, network_id: int=default, verbose: bool = False) -> "Base32Address":    
+    def zero_address(cls, network_id: int=cast(int, default), verbose: bool = False) -> "Base32Address":    
         """
         Get zero address of the target network.
 
@@ -532,11 +532,11 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         'cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw'
         """        
         if network_id is default:
-            network_id = cls.default_network_id
+            network_id = cast(int, cls.default_network_id)
         return cls.encode("0x0000000000000000000000000000000000000000", network_id, verbose)
     
     @classmethod
-    def shorten_base32_address(cls, base32_address: str, compressed=False) -> str:
+    def shorten_base32_address(cls, base32_address: str, compressed: bool=False) -> str:
         """
         returns the abbreviation of the address
 
@@ -555,7 +555,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return cls._shorten_base32_address(base32_address, compressed)
     
     @classmethod
-    def _shorten_base32_address(cls, base32_address: str, compressed=False) -> str:
+    def _shorten_base32_address(cls, base32_address: str, compressed: bool=False) -> str:
         lowcase = base32_address.lower()
         splits = lowcase.split(DELIMITER)
         prefix = splits[0]
@@ -611,22 +611,20 @@ class Base32Address(str, metaclass=Base32AddressMeta):
                 raise InvalidBase32Address(f"The network prefix {network_prefix} is invalid")
 
     @classmethod
-    def _create_checksum(cls, prefix, payload) -> str:
+    def _create_checksum(cls, prefix: NetworkPrefix, payload: str) -> str:
         """
         create checksum from prefix and payload
         :param prefix: network prefix (string)
         :param payload: bytes
         :return: string
         """
-        prefix = cls._prefix_to_words(prefix)
         delimiter = VERSION_BYTE
-        payload = base32.decode_to_words(payload)
         template = CHECKSUM_TEMPLATE
-        mod = cls._poly_mod(prefix + delimiter + payload + template)
+        mod = cls._poly_mod(cls._prefix_to_words(prefix) + delimiter + base32.decode_to_words(payload) + template)
         return base32.encode(cls._checksum_to_bytes(mod))
 
     @classmethod
-    def _detect_address_type(cls, hex_address_buf) -> AddressType:
+    def _detect_address_type(cls, hex_address_buf: bytes) -> AddressType:
         if hex_address_buf == bytes(20):
             return TYPE_NULL
         first_byte = hex_address_buf[0] & 0xf0
@@ -640,14 +638,14 @@ class Base32Address(str, metaclass=Base32AddressMeta):
             return TYPE_INVALID
 
     @classmethod
-    def _prefix_to_words(cls, prefix) -> bytearray:
+    def _prefix_to_words(cls, prefix: NetworkPrefix) -> bytearray:
         words = bytearray()
         for v in bytes(prefix, 'ascii'):
             words.append(v & 0x1f)
         return words
 
     @classmethod
-    def _checksum_to_bytes(cls, data) -> bytearray:
+    def _checksum_to_bytes(cls, data: int) -> bytearray:
         result = bytearray(0)
         result.append((data >> 32) & 0xff)
         result.append((data >> 24) & 0xff)

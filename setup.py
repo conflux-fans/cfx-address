@@ -55,7 +55,7 @@ extras_require = {
 }
 
 extras_require['dev'] = (
-    extras_require['tester']
+    extras_require['tester'] # type: ignore
     + extras_require['linter']
     + extras_require['docs']
     + extras_require['dev']

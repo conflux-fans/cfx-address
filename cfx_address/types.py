@@ -4,14 +4,19 @@ from typing import (
     Literal,
     NewType, 
     TypedDict,
-    Union
+    Union,
+    Callable,
 )
 
 from eth_typing import HexAddress
 
 if sys.version_info >= (3,9):
     from typing import Annotated
-    TRIVIAL_NETWORK_PREFIX = Annotated[str, lambda x: x.startswith("net")]
+    starts_with_net: Callable[[str], bool] = lambda x: (x.startswith("net") or x.startswith("NET"))
+    TRIVIAL_NETWORK_PREFIX = Annotated[
+        str, 
+        starts_with_net
+    ]
 else:
     TRIVIAL_NETWORK_PREFIX = NewType("TRIVIAL_NETWORK_PREFIX", str)
 
