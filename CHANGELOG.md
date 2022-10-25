@@ -1,6 +1,11 @@
 # changlog
 
-## 1.0.0-beta.13 (intended)
+## 1.0.0-beta.14
+
+* migrate to pylance
+* Fix: `Base32Address` initialization logic when `verbose is None`
+
+## 1.0.0-beta.13
 
 * Mypy integration and support
 * support default network id
