@@ -145,26 +145,34 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         True
         """
         if network_id is default:
+            # if network_id is not specified (default),
+            # # network_id will be cls.default_network_id, which defaults to None
             network_id = cls.default_network_id
+        # if _from_trust is True, 
+        # it requires network_id is None and verbose is None
+        # the new Base32Address will be initialized without validating, which means you can do
+        # Base32Address("hello world", network_id=None, verbose=None, _from_trust=True)
+        # so this API should be used carefully 
         if _from_trust:
-            if network_id is None and verbose is None: 
+            if network_id is None and verbose is None:
                 return str.__new__(cls, address)
             else:
                 raise ValueError("Invalid argument: `network_id` and `verbose` should be None if from_trusted_source is True")
-        if verbose is None:
-            # verbose default set to None because of such case
-            # Base32Address("CFX:...", verbose=False)
-            # we need to know if verbose option is specified
-            verbose = False
         
         try:
-            parts = cls.decode(address)
+            parts = cls.decode(address) # this line might raise exception if the address is not valid
+            if verbose is None:
+                # if verbose is None, the new address verbose is determined by the original address
+                verbose = (address[0] == "N" or address[0] == "C")
             if network_id is None:
-                val = cls._encode(parts["hex_address"], parts["network_id"], verbose, _ignore_invalid_type=_ignore_invalid_type)
-            else:
-                validate_network_id(network_id)  
-                val = cls._encode(parts["hex_address"], network_id, verbose, _ignore_invalid_type=_ignore_invalid_type)
+                # if network_id is None, the new address verbose is determined by the original address
+                network_id = parts["network_id"]
+
+            validate_network_id(network_id)  
+            val = cls._encode(parts["hex_address"], network_id, verbose, _ignore_invalid_type=_ignore_invalid_type)
         except InvalidBase32Address:
+            if verbose is None:
+                verbose = False
             if is_hex_address(address):
                 validate_network_id(network_id)
                 val = cls._encode(address, network_id, verbose, _ignore_invalid_type=_ignore_invalid_type) # type: ignore

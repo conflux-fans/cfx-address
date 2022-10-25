@@ -141,6 +141,13 @@ def test_init_from_trusted():
     assert instance == testnet_verbose_address
     assert instance == testnet_address
 
+def test_init_with_none_verbose():
+    instance = Base32Address(testnet_verbose_address, verbose=None)
+    assert str(instance) == str(testnet_verbose_address)
+    
+    instance = Base32Address(mainnet_verbose_address, network_id=1, verbose=None)
+    assert str(instance) == str(testnet_verbose_address), "verbose should be preserved!"
+
 def test_init_from_invalid_type():
     with pytest.raises(InvalidConfluxHexAddress):
         instance = Base32Address(invalid_hex_address, 1)
