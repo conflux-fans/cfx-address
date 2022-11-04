@@ -74,11 +74,14 @@ setup(
     long_description_content_type='text/markdown',
     long_description=long_description,
     packages=find_packages(),
+    python_requires='>=3.7',
     package_data={'cfx_address': ['py.typed']},
     install_requires=[
         "eth-utils>=2.0.0,<3.0.0",
         "hexbytes>=0.1.0,<1.0.0",
-        "cfx-utils>=1.0.0b10",
+        "cfx-utils>=1.0.0b14",
+        "typing_extensions",
+        "cached_property==1.5.2"
     ],  # add any additional packages that
     # needs to be installed along with your package. Eg: 'caer'
     extras_require=extras_require,
