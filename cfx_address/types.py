@@ -1,24 +1,20 @@
-import sys
-
 from typing import (
-    Literal,
-    NewType, 
-    TypedDict,
     Union,
     Callable,
+)
+from typing_extensions import (
+    Literal,
+    Annotated,
+    TypedDict,
 )
 
 from eth_typing import HexAddress
 
-if sys.version_info >= (3,9):
-    from typing import Annotated
-    starts_with_net: Callable[[str], bool] = lambda x: (x.startswith("net") or x.startswith("NET"))
-    TRIVIAL_NETWORK_PREFIX = Annotated[
-        str, 
-        starts_with_net
-    ]
-else:
-    TRIVIAL_NETWORK_PREFIX = NewType("TRIVIAL_NETWORK_PREFIX", str)
+starts_with_net: Callable[[str], bool] = lambda x: (x.startswith("net") or x.startswith("NET"))
+TRIVIAL_NETWORK_PREFIX = Annotated[
+    str, 
+    starts_with_net
+]
 
 NetworkPrefix = Union[
     Literal["cfx", "cfxtest"], TRIVIAL_NETWORK_PREFIX,

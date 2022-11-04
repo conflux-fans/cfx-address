@@ -1,9 +1,11 @@
 # utils do not rely on other modules are defined here to avoid recursive import
 from typing import (
     Any,
-    Literal,
     Union,
     cast,
+)
+from typing_extensions import (
+    Literal
 )
 from hexbytes import (
     HexBytes,
