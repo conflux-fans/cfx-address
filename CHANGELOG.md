@@ -1,5 +1,9 @@
 # changlog
 
+## 1.0.0-beta.15
+
+* Support python3.7
+
 ## 1.0.0-beta.14
 
 * migrate to pylance
