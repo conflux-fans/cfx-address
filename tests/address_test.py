@@ -11,7 +11,7 @@ from cfx_utils.exceptions import (
     InvalidConfluxHexAddress, 
 )
 
-hex_address = "0x1ecde7223747601823f7535d7968ba98b4881e09"
+hex_address = "0x1ECdE7223747601823f7535d7968Ba98b4881E09"
 checksum_address = "0x1ECdE7223747601823f7535d7968Ba98b4881E09"
 
 testnet_verbose_address = "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4"

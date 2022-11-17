@@ -15,7 +15,7 @@ from cfx_utils.exceptions import (
 
 eoa_address = "0xd43d2a93e97245E290feE74276a1EF8D275bE646"
 converted_address = "0x143d2a93e97245e290fee74276a1ef8d275be646"
-hex_address = "0x1ecde7223747601823f7535d7968ba98b4881e09"
+hex_address = "0x1ECdE7223747601823f7535d7968Ba98b4881E09"
 testnet_verbose_address = "CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4"
 mainnet_address = "cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu"
 
