@@ -1,5 +1,14 @@
 # changlog
 
+## 1.0.0-beta.16
+
+* All returned hex address is all encoded in checksum format, including
+  * `Base32Address.decode`
+  * `Base32Address(...).hex_address`
+  * `normaliz_to`
+  * The definition change of `AddressParts`
+  * And `.eth_checksum_address` will be deprecated in the next version
+
 ## 1.0.0-beta.15
 
 * Support python3.7

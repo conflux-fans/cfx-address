@@ -8,7 +8,7 @@ from typing_extensions import (
     TypedDict,
 )
 
-from eth_typing import HexAddress
+from eth_typing import ChecksumAddress
 
 starts_with_net: Callable[[str], bool] = lambda x: (x.startswith("net") or x.startswith("NET"))
 TRIVIAL_NETWORK_PREFIX = Annotated[
@@ -31,4 +31,4 @@ AddressType = Literal[
 class Base32AddressParts(TypedDict):
     network_id: int
     address_type: AddressType
-    hex_address: HexAddress
+    hex_address: ChecksumAddress

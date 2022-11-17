@@ -6,6 +6,7 @@ from typing import (
     cast,
     ClassVar
 )
+import warnings
 from typing_extensions import (
     Literal,
     get_args,
@@ -123,9 +124,8 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     ...     address.verbose_address,
     ...     address.abbr,
     ...     address.mapped_evm_space_address,
-    ...     address.eth_checksum_address,
     ... ]
-    ['user', 1, '0x1ecde7223747601823f7535d7968ba98b4881e09', 'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4', 'cfxtest:aat...95j4', '0x349f086998cF4a0C5a00b853a0E93239D81A97f6', '0x1ECdE7223747601823f7535d7968Ba98b4881E09']
+    ['user', 1, '0x1ECdE7223747601823f7535d7968Ba98b4881E09', 'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4', 'cfxtest:aat...95j4', '0x349f086998cF4a0C5a00b853a0E93239D81A97f6']
     """
     _default_network_id: ClassVar[Optional[int]] = None
     
@@ -249,13 +249,13 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return self.__class__._decode_network_id(self)
 
     @cached_property
-    def hex_address(self) -> HexAddress:
+    def hex_address(self) -> ChecksumAddress:
         """
-        :return HexAddress: hex address of the address.
+        :return ChecksumAddress: hex address of the address, will be encoded in ethereum checksum format
         
         >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
         >>> address.hex_address
-        '0x1ecde7223747601823f7535d7968ba98b4881e09'
+        '0x1ECdE7223747601823f7535d7968Ba98b4881E09'
         """        
         return self.__class__._decode_hex_address(self)
 
@@ -275,15 +275,14 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     @cached_property
     def eth_checksum_address(self) -> ChecksumAddress:
         """
-        :return ChecksumAddress: self.hex_address in ethereum checksum address format
+        :return ChecksumAddress: alias for self.hex_address. This API will be deprecated in a future version
         
         >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
-        >>> address.hex_address
-        '0x1ecde7223747601823f7535d7968ba98b4881e09'
         >>> address.eth_checksum_address
         '0x1ECdE7223747601823f7535d7968Ba98b4881E09'
         """        
-        return to_checksum_address(self.hex_address)
+        warnings.warn("eth_checksum_address will be deprecated in a future version. use hex_address instead")
+        return self.hex_address
 
     @cached_property
     def verbose_address(self) -> "Base32Address":
@@ -326,9 +325,9 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return self.__class__._shorten_base32_address(self, True)
     
     @cached_property
-    def mapped_evm_space_address(self) -> HexAddress:
+    def mapped_evm_space_address(self) -> ChecksumAddress:
         """
-        :return HexAddress: the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
+        :return ChecksumAddress: the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
         
         >>> address = Base32Address("cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu")
         >>> address.mapped_evm_space_address
@@ -390,16 +389,16 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return cls._network_prefix_to_id(parts[0])
 
     @classmethod
-    def _decode_hex_address(cls, base32_address: str) -> HexAddress:
+    def _decode_hex_address(cls, base32_address: str) -> ChecksumAddress:
         base32_address = base32_address.lower()
         parts = base32_address.split(DELIMITER)
         return cls._payload_to_hex(parts[-1])
 
     @classmethod
-    def _payload_to_hex(cls, payload: str) -> HexAddress:
+    def _payload_to_hex(cls, payload: str) -> ChecksumAddress:
         address_buf = base32.decode(payload)
         hex_buf = address_buf[1:21]
-        return HEX_PREFIX + hex_buf.hex() # type: ignore
+        return to_checksum_address(HEX_PREFIX + hex_buf.hex()) # type: ignore
     
     @classmethod
     def decode(cls, base32_address: str) -> Base32AddressParts:
@@ -413,7 +412,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         :examples:
         
         >>> Base32Address.decode("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
-        {'network_id': 1, 'hex_address': '0x1ecde7223747601823f7535d7968ba98b4881e09', 'address_type': 'user'}
+        {'network_id': 1, 'hex_address': '0x1ECdE7223747601823f7535d7968Ba98b4881E09', 'address_type': 'user'}
         """        
         try:
             if not isinstance(base32_address, str):
@@ -581,7 +580,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
             return f"{prefix}{DELIMITER}{payload[:3]}...{payload[-8:]}"
     
     @classmethod
-    def calculate_mapped_evm_space_address(cls, base32_address: str) -> HexAddress:
+    def calculate_mapped_evm_space_address(cls, base32_address: str) -> ChecksumAddress:
         """
         calculate the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
 
@@ -595,11 +594,11 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return cls._mapped_evm_address_from_hex(hex_address)
 
     @classmethod
-    def _mapped_evm_address_from_hex(cls, hex_address: HexAddress) -> HexAddress:
+    def _mapped_evm_address_from_hex(cls, hex_address: str) -> ChecksumAddress:
         # do not check hex_address validity here
         mapped_hash = keccak(HexBytes(hex_address)).hex()
         mapped_evm_space_address = to_checksum_address(HEX_PREFIX + mapped_hash[-40:])
-        return cast(HexAddress, mapped_evm_space_address)
+        return mapped_evm_space_address
 
     @classmethod
     def _encode_network_prefix(cls, network_id: int) -> NetworkPrefix:

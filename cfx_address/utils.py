@@ -1,7 +1,6 @@
 from typing import (
     Optional,
     Union,
-    cast,
     overload,
 )
 from typing_extensions import (
@@ -10,6 +9,7 @@ from typing_extensions import (
 
 from eth_utils.address import (
     is_hex_address,
+    to_checksum_address,
 )
 
 from cfx_address._utils import (
@@ -25,7 +25,7 @@ from cfx_utils.exceptions import (
     AddressNotMatch,
 )
 from cfx_utils.types import (
-    HexAddress,
+    ChecksumAddress,
 )
 
 validate_base32 = Base32Address.validate
@@ -33,7 +33,7 @@ is_valid_base32 = Base32Address.is_valid_base32
 
 
 @overload
-def normalize_to(address: str, network_id: None, verbose: bool = False) -> HexAddress:
+def normalize_to(address: str, network_id: None, verbose: bool = False) -> ChecksumAddress:
     ...
 
 
@@ -44,19 +44,19 @@ def normalize_to(address: str, network_id: int, verbose: bool = False) -> Base32
 
 def normalize_to(
     address: str, network_id: Union[int, None], verbose: bool = False
-) -> Union[Base32Address, HexAddress]:
+) -> Union[Base32Address, ChecksumAddress]:
     """
     normalize a hex or base32 address to target network or hex address
 
     :param str address: a base32 address or hex address
-    :param Union[int, None] network_id: target network id. None will return hex address
-    :return Union[Base32Address, HexAddress]: a normalized base32 address or hex address, depending on network id
+    :param Union[int, None] network_id: target network id. None will return hex checksum address
+    :return Union[Base32Address, HexAddress]: a normalized base32 address or hex checksum address, depending on network id
     """
     if network_id is not None:
         return Base32Address(address, network_id, verbose)
     else:
         if is_hex_address(address):
-            return cast(HexAddress, address)
+            return to_checksum_address(address)
         # error will be raised if address is not a Base32Address
         return Base32Address(address).hex_address
 
