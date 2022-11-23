@@ -77,7 +77,7 @@ setup(
     python_requires='>=3.7',
     package_data={'cfx_address': ['py.typed']},
     install_requires=[
-        "eth-utils>=2.0.0,<3.0.0",
+        "eth-utils>=1.9.5",
         "hexbytes>=0.1.0,<1.0.0",
         "cfx-utils>=1.0.0b14",
         "typing_extensions",
