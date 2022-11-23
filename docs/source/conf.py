@@ -23,7 +23,7 @@ author = "Zhang Wenda"
 
 # The full version, including alpha/beta/rc tags
 # modify by bumpversion
-release = "1.0.0-beta.16"
+release = "1.0.0-beta.17"
 
 
 # -- General configuration ---------------------------------------------------
