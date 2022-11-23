@@ -1,5 +1,9 @@
 # changlog
 
+## 1.0.0-beta.17
+
+* Loosen eth-* dependency versions
+
 ## 1.0.0-beta.16
 
 * All returned hex address is all encoded in checksum format, including
