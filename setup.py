@@ -79,7 +79,7 @@ setup(
     install_requires=[
         "eth-utils>=1.9.5",
         "hexbytes>=0.1.0,<1.0.0",
-        "cfx-utils>=1.0.0b14",
+        "cfx-utils>=1.0.0",
         "typing_extensions",
         "cached_property==1.5.2"
     ],  # add any additional packages that
