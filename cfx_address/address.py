@@ -77,40 +77,26 @@ else:
     from cached_property import cached_property
 
 class Base32AddressMeta(type):
+    """
+    This is the metaclass of Base32Address to add a setter to class variable :attr:`Base32Address.default_network_id`
+    """    
     @property
     def default_network_id(self) -> Union[int, None]:
         """
-        Default network id of Base32Address.
-        Base32Address constructor, Base32Address.encode, and Base32Address.zero_address will use this variable if network_id parameter is not specified.
-        For most cases, it is recommended not to directly set this variable but use the `cfx_address.address.get_base32_address_factory(default_network_id)` to specify default_network_id 
-        
-        >>> Base32Address.zero_address()
-        Traceback (most recent call last):
-            ...
-        cfx_utils.exceptions.InvalidNetworkId: Expected network_id to be a positive integer. Receives None of type <class 'NoneType'>
-        >>> from cfx_address.address import get_base32_address_factory
-        >>> base32_address_factory = get_base32_address_factory(default_network_id=1)
-        >>> base32_address_factory.zero_address()
-        'cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw'
+        Refer to :attr:`Base32Address.default_network_id` for the document
         """ 
         return self._default_network_id
     
     @default_network_id.setter
     def default_network_id(cls, new_default: Union[None, int]) -> None: 
-        """
-        Set default network id of Base32Address by setting class variable `default_network_id`.
-        For most cases, it is recommended not to directly set this variable but use the `cfx_address.address.get_base32_address_factory(default_network_id)` to specify default_network_id 
-
-        :param Union[None, int] new_default: new default network id, could be None or positive int
-        """   
         if new_default is not None:
             validate_network_id(new_default)
         cls._default_network_id = new_default
 
 class Base32Address(str, metaclass=Base32AddressMeta):
     """
-    Class Base32Address can be used to create Base32Address instances and provides useful class methods to deal with base32 format addresses.
-    ## Base32Address inherits from str, so the Base32Address can be trivially used as strings
+    This class can be used to create Base32Address instances and provides useful class methods to deal with base32 format addresses.
+    :class:`~Base32Address` inherits from str, so the Base32Address can be trivially used as strings
     
     :examples:
     
@@ -127,12 +113,41 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     ... ]
     ['user', 1, '0x1ECdE7223747601823f7535d7968Ba98b4881E09', 'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4', 'cfxtest:aat...95j4', '0x349f086998cF4a0C5a00b853a0E93239D81A97f6']
     """
+    
     _default_network_id: ClassVar[Optional[int]] = None
+    default_network_id: ClassVar[Optional[int]]
+    """
+    | Default network id of Base32Address. :meth:`~Base32Address`, :meth:`~Base32Address.encode`, 
+        and :meth:`~Base32Address.zero_address` will use this variable if `network_id` parameter is not specified.
+    | For most cases, it is recommended not to directly set this variable but use 
+        :meth:`~cfx_address.address.get_base32_address_factory` to set :attr:`Base32Address.default_network_id`
+    | The setter is implemented in the metaclass :class:`cfx_address.address.Base32AddressMeta`
+
+    :param Union[None,int] new_default: new default network id, could be None or positive int
+    :raises InvalidNetworkId: the new_default value is not a positive integer
+    :examples:
+    
+    >>> Base32Address.zero_address()
+    Traceback (most recent call last):
+        ...
+    cfx_utils.exceptions.InvalidNetworkId: Expected network_id to be a positive integer. Receives None of type <class 'NoneType'>
+    >>> from cfx_address.address import get_base32_address_factory
+    >>> base32_address_factory = get_base32_address_factory(default_network_id=1)
+    >>> base32_address_factory.zero_address()
+    'cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw'
+    >>> base32_address_factory.default_network_id = 1029
+    >>> base32_address_factory.zero_address()
+    'cfx:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0sfbnjm2'
+    >>> base32_address_factory.default_network_id = 2.5
+    Traceback (most recent call last):
+        ...
+    cfx_utils.exceptions.InvalidNetworkId: Expected network_id to be a positive integer. Receives 2.5 of type <class 'float'>
+    """ 
     
     def __new__(cls, address: Union["Base32Address", HexAddress, str], network_id: Optional[int]=cast(int, default), verbose: Optional[bool] = None, *, _from_trust: bool = False, _ignore_invalid_type: bool = False) -> "Base32Address":
         """
-        :param Union[Base32Address, HexAddress, str] address: a base32-or-hex format address
-        :param Optional[int] network_id: target network_id of the address, defaults to `Base32Address.default_network_id`. Can be None if first argument is a base32 address, which means don't change network id
+        :param Union[Base32Address,HexAddress,str] address: a base32-or-hex format address
+        :param Optional[int] network_id: target network_id of the address, defaults to :attr:`~default_network_id`. Can be None if first argument is a base32 address, which means don't change network id
         :param Optional[bool] verbose: whether the return value will be encoded in verbose mode, defaults to None (will be viewed as None)
         :param bool _from_trust: whether the value is a verified Base32Address, if true, network_id and verbose option should be None, and the verification and encoding process will be skipped. Not recommended to set unless preformance is critical. Defaults to False
         :param bool _ignore_invalid_type: whether the address type is validated, defaults to False
@@ -195,7 +210,6 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         
         :param str _address: value compared to, which is supposed to be encoded in Base32 format (else return false)
         :return bool: True if self and _address are of same hex_address and network_id
-        :raises InvalidBase32Address: _address is not encoded in base32 format
         :examples:
         
         >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
@@ -219,14 +233,14 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     def from_public_key(
         cls, 
         public_key: Union[str, bytes],
-        network_id: int,
+        network_id: int = cast(int, default),
         verbose: bool = False
     ) -> "Base32Address":
         """
         create a Base32Address from public key
 
-        :param Union[str, bytes] public_key: str or bytes representation of public key
-        :param int network_id: network id of the return Base32Address, defaults to None
+        :param Union[str,bytes] public_key: str or bytes representation of public key
+        :param int network_id: network id of the return Base32Address, defaults to class variable :attr:`~default_network_id`
         :param bool verbose: whether the address will be represented in verbose mode, defaults to False
         :return Base32Address: Base32 representation of the address
         
@@ -275,7 +289,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     @cached_property
     def eth_checksum_address(self) -> ChecksumAddress:
         """
-        :return ChecksumAddress: alias for self.hex_address. This API will be deprecated in a future version
+        :return ChecksumAddress: alias for :attr:`~hex_address`. This API will be deprecated in a future version
         
         >>> address = Base32Address("cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4")
         >>> address.eth_checksum_address
@@ -312,7 +326,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     @cached_property
     def compressed_abbr(self) -> str:
         """
-        :return str: compressed abbreviation of the address, same as property "abbr" except for mainnet address
+        :return str: compressed abbreviation of the address, as mentioned in https://forum.conflux.fun/t/voting-results-for-new-address-abbreviation-standard/7131
              
         :examples:
         
@@ -340,10 +354,10 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         cls, hex_address: str, network_id: int=cast(int, default), verbose: bool=False, *, _ignore_invalid_type: bool=False
     ) -> "Base32Address":
         """
-        encode hex address to base32 address
+        Encode hex address to base32 address
 
         :param str hex_address: hex address begins with 0x
-        :param int network_id: address network id, e.g., 1 for testnet and 1029 for mainnet, defaults to `Base32Address.default_network_id`
+        :param int network_id: address network id, e.g., 1 for testnet and 1029 for mainnet, defaults to class variable :attr:`~default_network_id`
         :param bool verbose: whether the address will be presented in verbose mode, defaults to False
         :param bool _ignore_invalid_type: whether the address type is validated, defaults to False
         :return Base32Address: an encoded base32 object, which can be trivially used as python str
@@ -406,7 +420,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         Decode a base32 address string and get its hex_address, address_type, and network_id
 
         :param str base32_address: address encoded in base32 format
-        :raises InvalidBase32Address:
+        :raises InvalidBase32Address: the parameter is not a valid CIP-37 address
         :return Base32AddressParts: a dict object with field "hex_address", "address_type" and "network_id"
         
         :examples:
@@ -510,7 +524,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     @classmethod
     def validate(cls, value: Any) -> Literal[True]:
         """
-        validate if a value is a valid string-typed base32_address, raises an exception if not
+        Validate if a value is a valid string-typed base32_address, raises an exception if not
 
         :param str value: value to validate 
         :raises InvalidBase32Address: raises an exception if the address is not a valid base32 address
@@ -523,7 +537,8 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     @classmethod
     def equals(cls, address1: str, address2: str) -> bool:
         """
-        check if two addresses share same hex_address and network_id
+        | Check if two addresses share same hex_address and network_id
+        | It will throw an error if any param is not in CIP-37 format while :meth:`~__eq__` doesn't
 
         :param str address1: base32 address to compare
         :param str address2: base32 address to compare
@@ -552,7 +567,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     @classmethod
     def shorten_base32_address(cls, base32_address: str, compressed: bool=False) -> str:
         """
-        returns the abbreviation of the address
+        Returns the abbreviation of the address
 
         :param str base32_address: address to shorten
         :raises InvalidBase32Address: raised if address is invalid
@@ -582,7 +597,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     @classmethod
     def calculate_mapped_evm_space_address(cls, base32_address: str) -> ChecksumAddress:
         """
-        calculate the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
+        Calculate the address of mapped account for EVM space as defined in https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account
 
         :raises InvalidBase32Address: raised when address is not a valid base32 address
         :examples:
@@ -694,7 +709,8 @@ class Base32Address(str, metaclass=Base32AddressMeta):
 
 def get_base32_address_factory(default_network_id: int) -> Type[Base32Address]:
     """
-    Generate a `Base32Address` Class object with `default_network_id`
+    Generate a new :class:`~Base32Address` class object with `default_network_id` 
+    so the class variable will not influence the global :attr:`~Base32Address.default_network_id` setting
     
     >>> base32_address_factory = get_base32_address_factory(default_network_id=1)
     >>> base32_address_factory.zero_address()
