@@ -175,3 +175,5 @@ def test_base32_address_factory():
     mainnet_factory = get_base32_address_factory(1029)
     assert testnet_factory(hex_address) == testnet_address
     assert mainnet_factory(hex_address) == mainnet_address
+    with pytest.raises(InvalidNetworkId):
+        testnet_factory.default_network_id = "3123123" # type: ignore
