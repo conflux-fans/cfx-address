@@ -62,19 +62,19 @@ def test_validation():
     
 
 def test_encode():
-    assert str(Base32Address.encode(hex_address, 1)) == testnet_address
-    assert str(Base32Address.encode(hex_address, 1, True)) == testnet_verbose_address
-    assert str(Base32Address.encode(hex_address, 1029)) == mainnet_address
-    assert str(Base32Address.encode(hex_address, 1029, True)) == mainnet_verbose_address
-    assert str(Base32Address.encode(hex_address, 8888)) == custom_net_address
+    assert str(Base32Address.encode_base32(hex_address, 1)) == testnet_address
+    assert str(Base32Address.encode_base32(hex_address, 1, True)) == testnet_verbose_address
+    assert str(Base32Address.encode_base32(hex_address, 1029)) == mainnet_address
+    assert str(Base32Address.encode_base32(hex_address, 1029, True)) == mainnet_verbose_address
+    assert str(Base32Address.encode_base32(hex_address, 8888)) == custom_net_address
     with pytest.raises(InvalidNetworkId):
-        Base32Address.encode(hex_address, 0)
+        Base32Address.encode_base32(hex_address, 0)
     with pytest.raises(InvalidHexAddress):
-        Base32Address.encode(testnet_address, 1)
+        Base32Address.encode_base32(testnet_address, 1)
     with pytest.raises(InvalidAddress):
-        Base32Address.encode(invalid_net_address, 1)
+        Base32Address.encode_base32(invalid_net_address, 1)
     with pytest.raises(InvalidConfluxHexAddress):
-        Base32Address.encode(eoa_address, 1)
+        Base32Address.encode_base32(eoa_address, 1)
 
 def test_equals_and_ne():
     assert Base32Address.equals(testnet_address, testnet_verbose_address)
@@ -152,8 +152,8 @@ def test_init_from_invalid_type():
     with pytest.raises(InvalidConfluxHexAddress):
         instance = Base32Address(invalid_hex_address, 1)
     with pytest.raises(InvalidConfluxHexAddress):
-        Base32Address.encode(invalid_hex_address, 1)
-    Base32Address.encode(invalid_hex_address, 1, _ignore_invalid_type=True)
+        Base32Address.encode_base32(invalid_hex_address, 1)
+    Base32Address.encode_base32(invalid_hex_address, 1, _ignore_invalid_type=True)
     instance = Base32Address(invalid_hex_address, 1, True, _ignore_invalid_type=True)
     assert instance.address_type == "invalid"
 
@@ -168,7 +168,7 @@ def test_with_default_network_id():
     assert Base32Address(hex_address) == testnet_address
     assert Base32Address(hex_address) == testnet_address
     assert Base32Address.zero_address() == "cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw"
-    assert Base32Address.encode(hex_address) == testnet_address
+    assert Base32Address.encode_base32(hex_address) == testnet_address
 
 def test_base32_address_factory():
     testnet_factory = get_base32_address_factory(1)

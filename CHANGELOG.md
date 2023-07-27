@@ -1,5 +1,10 @@
 # changlog
 
+## 1.0.1
+
+* Add `Base32Address.encode_base32` to replace `Base32Address.encode`
+* Deprecation warning for `Base32Address.encode`
+
 ## 1.0.0
 
 * official release
