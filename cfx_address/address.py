@@ -307,7 +307,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         >>> address.verbose_address
         'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4'
         """        
-        return self.__class__.encode(self.hex_address, self.network_id, True)
+        return self.encode_base32(self.hex_address, self.network_id, True)
     
     @cached_property
     def abbr(self) -> str:
@@ -590,7 +590,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         """        
         if network_id is default:
             network_id = cast(int, cls.default_network_id)
-        return cls.encode("0x0000000000000000000000000000000000000000", network_id, verbose)
+        return cls.encode_base32("0x0000000000000000000000000000000000000000", network_id, verbose)
     
     @classmethod
     def shorten_base32_address(cls, base32_address: str, compressed: bool=False) -> str:

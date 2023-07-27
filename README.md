@@ -97,13 +97,12 @@ assert not address == mainnet_address
     address.verbose_address,
     address.short,
     address.mapped_evm_space_address
-    address.eth_checksum_address
 ]
 # ['user',
 #  1,
-#  '0x1ecde7223747601823f7535d7968ba98b4881e09',
+#  '0x1ECdE7223747601823f7535d7968Ba98b4881E09',
 #  'CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4',
 #  'cfxtest:aat...95j4',
 #  '0x349f086998cF4a0C5a00b853a0E93239D81A97f6',
-#  '0x1ECdE7223747601823f7535d7968Ba98b4881E09']
+#  ]
 ```
