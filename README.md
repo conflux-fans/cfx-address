@@ -28,7 +28,7 @@ Base32Address.validate("0x1ecde7223747601823f7535d7968ba98b4881e09")
 
 ``` python
 # encode hex address to base32
-Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", network_id=1)
+Base32Address.encode_base32("0x1ecde7223747601823f7535d7968ba98b4881e09", network_id=1)
 #'cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4'
 
 # decode base32 address

@@ -2,6 +2,7 @@
 venv
 **/__pycache__
 .idea
+.cache
 build
 dist
 cfx_address.egg-info
