@@ -70,7 +70,7 @@ setup(
     name="cfx-address",
     version="1.0.1", # edit using bumpversion
     author="The Conflux foundation",
-    author_email="wangpan@conflux-chain.org",
+    author_email="wenda.zhang@confluxnetwork.org",
     long_description_content_type='text/markdown',
     long_description=long_description,
     packages=find_packages(),
@@ -79,7 +79,7 @@ setup(
     install_requires=[
         "eth-utils>=1.9.5",
         "hexbytes>=0.1.0,<1.0.0",
-        "cfx-utils>=1.0.0",
+        "cfx-utils>=1.0.2",
         "typing_extensions",
         "cached_property==1.5.2;python_version<'3.8'"
     ],  # add any additional packages that

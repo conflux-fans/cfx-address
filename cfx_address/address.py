@@ -350,7 +350,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         return self.__class__._mapped_evm_address_from_hex(self.hex_address)
 
     @classmethod
-    def encode_base32( # type: ignore
+    def encode_base32(
         cls, hex_address: str, network_id: int=cast(int, default), verbose: bool=False, *, _ignore_invalid_type: bool=False
     ) -> "Base32Address":
         """
@@ -374,34 +374,6 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         validate_hex_address(hex_address)
         validate_network_id(network_id)
         return cls(hex_address, network_id, verbose, _ignore_invalid_type=_ignore_invalid_type)
-
-    @classmethod
-    def encode( # type: ignore
-        cls, hex_address: str, network_id: int=cast(int, default), verbose: bool=False, *, _ignore_invalid_type: bool=False
-    ) -> "Base32Address":
-        """
-        ## This method is deprecated and will be removed in future versions. Use encode_base32 method instead. ##
-        Encode hex address to base32 address.
-
-        :param str hex_address: hex address begins with 0x
-        :param int network_id: address network id, e.g., 1 for testnet and 1029 for mainnet, defaults to class variable :attr:`~default_network_id`
-        :param bool verbose: whether the address will be presented in verbose mode, defaults to False
-        :param bool _ignore_invalid_type: whether the address type is validated, defaults to False
-        :return Base32Address: an encoded base32 object, which can be trivially used as python str
-        
-        :examples:
-        
-        >>> Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", 1)
-        'cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4'
-        >>> Base32Address.encode("0x1ecde7223747601823f7535d7968ba98b4881e09", 1029, verbose=True)
-        'CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU'
-        """ 
-        warnings.warn(
-            "Base32Address.encode is deprecated and will be removed in future versions. "
-            "Use Base32Address.encode_base32 instead.", 
-            DeprecationWarning
-        )
-        return cls.encode_base32(hex_address, network_id, verbose, _ignore_invalid_type=_ignore_invalid_type)
 
     @classmethod
     def _encode(
