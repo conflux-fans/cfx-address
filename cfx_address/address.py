@@ -719,7 +719,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         from pydantic_core import (
             core_schema
         )
-        def custom_handler(source_type: Any) -> CoreSchema:
+        def custom_handler(source_type: Any) -> "CoreSchema":
             if source_type is Base32Address:
                 return core_schema.no_info_after_validator_function(cls, handler(str))
             return handler(source_type)
