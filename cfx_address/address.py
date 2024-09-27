@@ -4,7 +4,8 @@ from typing import (
     Type, 
     Union,
     cast,
-    ClassVar
+    ClassVar,
+    TYPE_CHECKING
 )
 import warnings
 from typing_extensions import (
@@ -68,6 +69,10 @@ from cfx_address.consts import (
 from cfx_address._utils import (
     public_key_to_cfx_hex
 )
+
+if TYPE_CHECKING:
+    from pydantic import GetCoreSchemaHandler
+    from pydantic_core import CoreSchema
 
 default = object()
 
@@ -706,6 +711,21 @@ class Base32Address(str, metaclass=Base32AddressMeta):
                 c ^= 0x1e4f43e470
 
         return c ^ 1
+    
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: "GetCoreSchemaHandler"
+    ) -> "CoreSchema":
+        from pydantic_core import (
+            core_schema
+        )
+        def custom_handler(source_type: Any) -> CoreSchema:
+            if source_type is Base32Address:
+                return core_schema.no_info_after_validator_function(cls, handler(str))
+            return handler(source_type)
+        
+        return custom_handler(source_type)
+
 
 def get_base32_address_factory(default_network_id: int) -> Type[Base32Address]:
     """
