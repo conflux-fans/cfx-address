@@ -68,7 +68,7 @@ with open('./README.md') as readme:
 setup(
     # the name must match the folder name 'verysimplemodule'
     name="cfx-address",
-    version="1.1.0", # edit using bumpversion
+    version="1.2.0", # edit using bumpversion
     author="The Conflux foundation",
     author_email="wenda.zhang@confluxnetwork.org",
     long_description_content_type='text/markdown',
