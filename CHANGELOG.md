@@ -1,5 +1,9 @@
 # changlog
 
+## 1.2.0
+
+* feat: support pydantic v2
+
 ## 1.1.0
 
 * Remove `Base32Address.encode`

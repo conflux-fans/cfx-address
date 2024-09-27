@@ -81,7 +81,8 @@ setup(
         "hexbytes>=0.1.0,<1.0.0",
         "cfx-utils>=1.0.2",
         "typing_extensions",
-        "cached_property==1.5.2;python_version<'3.8'"
+        "cached_property==1.5.2;python_version<'3.8'",
+        "pydantic>=2.0.0,<3"
     ],  # add any additional packages that
     # needs to be installed along with your package. Eg: 'caer'
     extras_require=extras_require,
