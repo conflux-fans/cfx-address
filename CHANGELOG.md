@@ -1,5 +1,9 @@
 # changlog
 
+## 1.2.1
+
+* feat: always allow initialization from an instance of Base32Address when network_id and verbose are not specified
+
 ## 1.2.0
 
 * feat: support pydantic v2
