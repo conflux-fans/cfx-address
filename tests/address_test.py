@@ -157,6 +157,16 @@ def test_init_from_invalid_type():
     instance = Base32Address(invalid_hex_address, 1, True, _ignore_invalid_type=True)
     assert instance.address_type == "invalid"
 
+def test_init_from_invalid_base32_address():
+    instance = Base32Address(invalid_hex_address, 1, True, _ignore_invalid_type=True)
+    assert instance.address_type == "invalid"
+    with pytest.raises(ValueError):
+        # Cannot init from an invalid base32 str
+        Base32Address(str(instance))
+    # can init from an instance of Base32Address as it must be validated or allowed by _ignore_invalid_type
+    init_from_instance = Base32Address(instance)
+    assert init_from_instance.address_type == "invalid"
+
 def test_init_from_public_key():
     instance = Base32Address.from_public_key(pk, 1)
     assert instance == Base32Address(pk_address, 1)

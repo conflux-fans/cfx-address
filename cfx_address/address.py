@@ -180,7 +180,7 @@ class Base32Address(str, metaclass=Base32AddressMeta):
         # the new Base32Address will be initialized without validating, which means you can do
         # Base32Address("hello world", network_id=None, verbose=None, _from_trust=True)
         # so this API should be used carefully 
-        if _from_trust:
+        if _from_trust or isinstance(address, cls):
             if network_id is None and verbose is None:
                 return str.__new__(cls, address)
             else:
