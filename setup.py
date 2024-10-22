@@ -5,7 +5,7 @@ DESCRIPTION = 'Conflux base32 address'
 
 extras_require = {
     'tester': [
-        "pytest>=6.2.5,<7",
+        "pytest>=8,<9",
     ],
     'linter': [
         # "black>=22.1.0,<23.0",
