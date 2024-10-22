@@ -175,12 +175,16 @@ class Base32Address(str, metaclass=Base32AddressMeta):
             # if network_id is not specified (default),
             # # network_id will be cls.default_network_id, which defaults to None
             network_id = cls.default_network_id
+        # if the address is an instance of Base32Address, and network_id and verbose are not specified,
+        # return the address as a str ignoring validity check because it is already validated or allowed by _ignore_invalid_type
+        if isinstance(address, cls) and network_id is None and verbose is None:
+            return str.__new__(cls, str(address))
         # if _from_trust is True, 
         # it requires network_id is None and verbose is None
         # the new Base32Address will be initialized without validating, which means you can do
         # Base32Address("hello world", network_id=None, verbose=None, _from_trust=True)
         # so this API should be used carefully 
-        if _from_trust or isinstance(address, cls):
+        if _from_trust:
             if network_id is None and verbose is None:
                 return str.__new__(cls, address)
             else:
