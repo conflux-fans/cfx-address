@@ -1,5 +1,9 @@
 # changlog
 
+## 1.2.2
+
+* deps: bump hexbytes to 1.0.0+
+
 ## 1.2.1
 
 * feat: always allow initialization from an instance of Base32Address when network_id and verbose are not specified
