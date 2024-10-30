@@ -1,5 +1,9 @@
 # changlog
 
+## 1.2.3
+
+* deps: don't pin hexbytes version
+
 ## 1.2.2
 
 * deps: bump hexbytes to 1.0.0+
