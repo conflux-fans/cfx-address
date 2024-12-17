@@ -720,15 +720,18 @@ class Base32Address(str, metaclass=Base32AddressMeta):
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: "GetCoreSchemaHandler"
     ) -> "CoreSchema":
-        from pydantic_core import (
-            core_schema
+        from pydantic_core.core_schema import (
+            no_info_plain_validator_function
         )
-        def custom_handler(source_type: Any) -> "CoreSchema":
-            if source_type is Base32Address:
-                return core_schema.no_info_after_validator_function(cls, handler(str))
-            return handler(source_type)
+        def custom_handler(value: Any):
+            if isinstance(value, Base32Address):
+                return value
+            address_type = cls.decode(value)["address_type"]
+            if address_type == TYPE_INVALID:
+                raise ValueError(f"Invalid address type: {address_type}, please convert responding address to Base32Address using Base32Address(address, _ignore_invalid_type=True)")
+            return cls(value)
         
-        return custom_handler(source_type)
+        return no_info_plain_validator_function(custom_handler)
 
 
 def get_base32_address_factory(default_network_id: int) -> Type[Base32Address]:
