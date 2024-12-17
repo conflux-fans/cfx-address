@@ -1,5 +1,9 @@
 # changlog
 
+## 1.2.4
+
+* fix: pydantic validator
+
 ## 1.2.3
 
 * deps: don't pin hexbytes version
