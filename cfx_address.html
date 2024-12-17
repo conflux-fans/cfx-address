@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-cn" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cfx_address package &mdash; cfx-address 1.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4c5c6c96"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cfx-address
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">cfx_address package</a><ul>
+<li><a class="reference internal" href="#cfx_address.Base32Address"><code class="docutils literal notranslate"><span class="pre">Base32Address</span></code></a><ul>
+<li><a class="reference internal" href="#cfx_address.Base32Address.default_network_id"><code class="docutils literal notranslate"><span class="pre">Base32Address.default_network_id</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.__eq__"><code class="docutils literal notranslate"><span class="pre">Base32Address.__eq__()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.from_public_key"><code class="docutils literal notranslate"><span class="pre">Base32Address.from_public_key()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.network_id"><code class="docutils literal notranslate"><span class="pre">Base32Address.network_id</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.hex_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.hex_address</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.address_type"><code class="docutils literal notranslate"><span class="pre">Base32Address.address_type</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.eth_checksum_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.eth_checksum_address</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.verbose_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.verbose_address</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.abbr"><code class="docutils literal notranslate"><span class="pre">Base32Address.abbr</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.compressed_abbr"><code class="docutils literal notranslate"><span class="pre">Base32Address.compressed_abbr</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.mapped_evm_space_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.mapped_evm_space_address</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.encode_base32"><code class="docutils literal notranslate"><span class="pre">Base32Address.encode_base32()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.decode"><code class="docutils literal notranslate"><span class="pre">Base32Address.decode()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.is_valid_base32"><code class="docutils literal notranslate"><span class="pre">Base32Address.is_valid_base32()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.validate"><code class="docutils literal notranslate"><span class="pre">Base32Address.validate()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.equals"><code class="docutils literal notranslate"><span class="pre">Base32Address.equals()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.zero_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.zero_address()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.shorten_base32_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.shorten_base32_address()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.Base32Address.calculate_mapped_evm_space_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.calculate_mapped_evm_space_address()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cfx_address.validate_base32"><code class="docutils literal notranslate"><span class="pre">validate_base32()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.eth_eoa_address_to_cfx_hex"><code class="docutils literal notranslate"><span class="pre">eth_eoa_address_to_cfx_hex()</span></code></a></li>
+<li><a class="reference internal" href="#cfx_address.public_key_to_cfx_hex"><code class="docutils literal notranslate"><span class="pre">public_key_to_cfx_hex()</span></code></a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cfx-address</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">cfx_address package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cfx_address.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cfx_address">
+<span id="cfx-address-package"></span><h1>cfx_address package<a class="headerlink" href="#module-cfx_address" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cfx_address.Base32Address">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfx_address.</span></span><span class="sig-name descname"><span class="pre">Base32Address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address:</span> <span class="pre">~cfx_address.address.Base32Address</span> <span class="pre">|</span> <span class="pre">~eth_typing.evm.HexAddress</span> <span class="pre">|</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_from_trust:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ignore_invalid_type:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cfx_address.Base32Address" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+<p>This class can be used to create Base32Address instances and provides useful class methods to deal with base32 format addresses.
+<a class="reference internal" href="#cfx_address.Base32Address" title="cfx_address.Base32Address"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base32Address</span></code></a> inherits from str, so the Base32Address can be trivially used as strings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;0x1ecde7223747601823f7535d7968ba98b4881e09&quot;</span><span class="p">,</span> <span class="n">network_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span>
+<span class="go">&#39;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span>
+<span class="gp">... </span>    <span class="n">address</span><span class="o">.</span><span class="n">address_type</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">address</span><span class="o">.</span><span class="n">network_id</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">address</span><span class="o">.</span><span class="n">hex_address</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">address</span><span class="o">.</span><span class="n">verbose_address</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">address</span><span class="o">.</span><span class="n">abbr</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">address</span><span class="o">.</span><span class="n">mapped_evm_space_address</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="go">[&#39;user&#39;, 1, &#39;0x1ECdE7223747601823f7535d7968Ba98b4881E09&#39;, &#39;CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4&#39;, &#39;cfxtest:aat...95j4&#39;, &#39;0x349f086998cF4a0C5a00b853a0E93239D81A97f6&#39;]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> (<em>Union</em><em>[</em><a class="reference internal" href="#cfx_address.Base32Address" title="cfx_address.Base32Address"><em>Base32Address</em></a><em>,</em><em>HexAddress</em><em>,</em><em>str</em><em>]</em>) – a base32-or-hex format address</p></li>
+<li><p><strong>network_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – target network_id of the address, defaults to <a class="reference internal" href="#cfx_address.Base32Address.default_network_id" title="cfx_address.Base32Address.default_network_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_network_id</span></code></a>. Can be None if first argument is a base32 address, which means don’t change network id</p></li>
+<li><p><strong>verbose</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – whether the return value will be encoded in verbose mode, defaults to None (will be viewed as None)</p></li>
+<li><p><strong>_from_trust</strong> (<em>bool</em>) – whether the value is a verified Base32Address, if true, network_id and verbose option should be None, and the verification and encoding process will be skipped. Not recommended to set unless preformance is critical. Defaults to False</p></li>
+<li><p><strong>_ignore_invalid_type</strong> (<em>bool</em>) – whether the address type is validated, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>InvalidAddress</strong> – address is neither base32 address nor hex address</p></li>
+<li><p><strong>InvalidNetworkId</strong> – network_id argument is not a positive integer or is None when address argument is a hex address</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return Base32Address<span class="colon">:</span></dt>
+<dd class="field-odd"><p>an encoded base32 object, which can be trivially used as python str, specially, if from_trusted_source is true, the input value will be directly used as the encoded value</p>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;0x1ecde7223747601823f7535d7968ba98b4881e09&quot;</span><span class="p">,</span> <span class="n">network_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span>
+<span class="go">&#39;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address_</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">network_id</span><span class="o">=</span><span class="mi">1029</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address_</span>
+<span class="go">&#39;CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">address_</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.default_network_id">
+<span class="sig-name descname"><span class="pre">default_network_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cfx_address.Base32Address.default_network_id" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Default network id of Base32Address. <a class="reference internal" href="#cfx_address.Base32Address" title="cfx_address.Base32Address"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Base32Address()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">encode()</span></code>, 
+and <a class="reference internal" href="#cfx_address.Base32Address.zero_address" title="cfx_address.Base32Address.zero_address"><code class="xref py py-meth docutils literal notranslate"><span class="pre">zero_address()</span></code></a> will use this variable if <cite>network_id</cite> parameter is not specified.</div>
+<div class="line">For most cases, it is recommended not to directly set this variable but use 
+<a class="reference internal" href="cfx_address.address.html#cfx_address.address.get_base32_address_factory" title="cfx_address.address.get_base32_address_factory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_base32_address_factory()</span></code></a> to set <a class="reference internal" href="#cfx_address.Base32Address.default_network_id" title="cfx_address.Base32Address.default_network_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Base32Address.default_network_id</span></code></a></div>
+<div class="line">The setter is implemented in the metaclass <a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32AddressMeta" title="cfx_address.address.Base32AddressMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">cfx_address.address.Base32AddressMeta</span></code></a></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_default</strong> (<em>Union</em><em>[</em><em>None</em><em>,</em><em>int</em><em>]</em>) – new default network id, could be None or positive int</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidNetworkId</strong> – the new_default value is not a positive integer</p>
+</dd>
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">zero_address</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">cfx_utils.exceptions.InvalidNetworkId</span>: <span class="n">Expected network_id to be a positive integer. Receives None of type &lt;class &#39;NoneType&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cfx_address.address</span> <span class="kn">import</span> <span class="n">get_base32_address_factory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base32_address_factory</span> <span class="o">=</span> <span class="n">get_base32_address_factory</span><span class="p">(</span><span class="n">default_network_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base32_address_factory</span><span class="o">.</span><span class="n">zero_address</span><span class="p">()</span>
+<span class="go">&#39;cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base32_address_factory</span><span class="o">.</span><span class="n">default_network_id</span> <span class="o">=</span> <span class="mi">1029</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base32_address_factory</span><span class="o">.</span><span class="n">zero_address</span><span class="p">()</span>
+<span class="go">&#39;cfx:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0sfbnjm2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base32_address_factory</span><span class="o">.</span><span class="n">default_network_id</span> <span class="o">=</span> <span class="mf">2.5</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">cfx_utils.exceptions.InvalidNetworkId</span>: <span class="n">Expected network_id to be a positive integer. Receives 2.5 of type &lt;class &#39;float&#39;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#cfx_address.Base32Address.__eq__" title="Link to this definition"></a></dt>
+<dd><p>invoked when a base32 address is compared to another object (or Base32Address typed object),</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>_address</strong> (<em>str</em>) – value compared to, which is supposed to be encoded in Base32 format (else return false)</p>
+</dd>
+<dt class="field-even">Return bool<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if self and _address are of same hex_address and network_id</p>
+</dd>
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">address</span> <span class="o">==</span> <span class="s2">&quot;CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s2">&quot;CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4&quot;</span> <span class="o">==</span> <span class="n">address</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span> <span class="o">==</span> <span class="n">address</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.from_public_key">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_public_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">public_key:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_id:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address" title="cfx_address.address.Base32Address"><span class="pre">Base32Address</span></a></span></span><a class="headerlink" href="#cfx_address.Base32Address.from_public_key" title="Link to this definition"></a></dt>
+<dd><p>create a Base32Address from public key</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>public_key</strong> (<em>Union</em><em>[</em><em>str</em><em>,</em><em>bytes</em><em>]</em>) – str or bytes representation of public key</p></li>
+<li><p><strong>network_id</strong> (<em>int</em>) – network id of the return Base32Address, defaults to class variable <a class="reference internal" href="#cfx_address.Base32Address.default_network_id" title="cfx_address.Base32Address.default_network_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_network_id</span></code></a></p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – whether the address will be represented in verbose mode, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return Base32Address<span class="colon">:</span></dt>
+<dd class="field-even"><p>Base32 representation of the address</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">from_public_key</span><span class="p">(</span><span class="s2">&quot;0xdacdaeba8e391e7649d3ac4b5329ca0e202d38facd928d88b5f729b89a497e43cc4ad3816fcfdb241497b3b43862afb4c899bc284bf60feca4ee66ff868d1feb&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">&#39;cfxtest:aamw4kj6g41pgedw1efjnsm59fbz0b9r1awbp8k2p2&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.network_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">network_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cfx_address.Base32Address.network_id" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return int<span class="colon">:</span></dt>
+<dd class="field-odd"><p>network_id of the address</p>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">network_id</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.hex_address">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hex_address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ChecksumAddress</span></em><a class="headerlink" href="#cfx_address.Base32Address.hex_address" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return ChecksumAddress<span class="colon">:</span></dt>
+<dd class="field-odd"><p>hex address of the address, will be encoded in ethereum checksum format</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">hex_address</span>
+<span class="go">&#39;0x1ECdE7223747601823f7535d7968Ba98b4881E09&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.address_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">address_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'null'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'builtin'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'contract'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'invalid'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cfx_address.Base32Address.address_type" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return Literal[“null”, “builtin”, “user”, “contract”, “invalid”]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>address type of an address.</p>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">address_type</span>
+<span class="go">&#39;user&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.eth_checksum_address">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eth_checksum_address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ChecksumAddress</span></em><a class="headerlink" href="#cfx_address.Base32Address.eth_checksum_address" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return ChecksumAddress<span class="colon">:</span></dt>
+<dd class="field-odd"><p>alias for <a class="reference internal" href="#cfx_address.Base32Address.hex_address" title="cfx_address.Base32Address.hex_address"><code class="xref py py-attr docutils literal notranslate"><span class="pre">hex_address</span></code></a>. This API will be deprecated in a future version</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">eth_checksum_address</span>
+<span class="go">&#39;0x1ECdE7223747601823f7535d7968Ba98b4881E09&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.verbose_address">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbose_address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address" title="cfx_address.address.Base32Address"><span class="pre">Base32Address</span></a></em><a class="headerlink" href="#cfx_address.Base32Address.verbose_address" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return Base32Address<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self presented in verbose mode</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">verbose_address</span>
+<span class="go">&#39;CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.abbr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abbr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cfx_address.Base32Address.abbr" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>abbreviation of the address, as mentioned in <a class="reference external" href="https://forum.conflux.fun/t/voting-results-for-new-address-abbreviation-standard/7131">https://forum.conflux.fun/t/voting-results-for-new-address-abbreviation-standard/7131</a></p>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">abbr</span>
+<span class="go">&#39;cfxtest:aat...95j4&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">abbr</span>
+<span class="go">&#39;cfx:aat...7ggp3vpu&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.compressed_abbr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compressed_abbr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#cfx_address.Base32Address.compressed_abbr" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>compressed abbreviation of the address, as mentioned in <a class="reference external" href="https://forum.conflux.fun/t/voting-results-for-new-address-abbreviation-standard/7131">https://forum.conflux.fun/t/voting-results-for-new-address-abbreviation-standard/7131</a></p>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">abbr</span>
+<span class="go">&#39;cfx:aat...7ggp3vpu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">compressed_abbr</span>
+<span class="go">&#39;cfx:aat...3vpu&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.mapped_evm_space_address">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mapped_evm_space_address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ChecksumAddress</span></em><a class="headerlink" href="#cfx_address.Base32Address.mapped_evm_space_address" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return ChecksumAddress<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the address of mapped account for EVM space as defined in <a class="reference external" href="https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account">https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account</a></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">address</span> <span class="o">=</span> <span class="n">Base32Address</span><span class="p">(</span><span class="s2">&quot;cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">address</span><span class="o">.</span><span class="n">mapped_evm_space_address</span>
+<span class="go">&#39;0x349f086998cF4a0C5a00b853a0E93239D81A97f6&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.encode_base32">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode_base32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hex_address:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_id:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ignore_invalid_type:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address" title="cfx_address.address.Base32Address"><span class="pre">Base32Address</span></a></span></span><a class="headerlink" href="#cfx_address.Base32Address.encode_base32" title="Link to this definition"></a></dt>
+<dd><p>Encode hex address to base32 address</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hex_address</strong> (<em>str</em>) – hex address begins with 0x</p></li>
+<li><p><strong>network_id</strong> (<em>int</em>) – address network id, e.g., 1 for testnet and 1029 for mainnet, defaults to class variable <a class="reference internal" href="#cfx_address.Base32Address.default_network_id" title="cfx_address.Base32Address.default_network_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_network_id</span></code></a></p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – whether the address will be presented in verbose mode, defaults to False</p></li>
+<li><p><strong>_ignore_invalid_type</strong> (<em>bool</em>) – whether the address type is validated, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return Base32Address<span class="colon">:</span></dt>
+<dd class="field-even"><p>an encoded base32 object, which can be trivially used as python str</p>
+</dd>
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">encode_base32</span><span class="p">(</span><span class="s2">&quot;0x1ecde7223747601823f7535d7968ba98b4881e09&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">&#39;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">encode_base32</span><span class="p">(</span><span class="s2">&quot;0x1ecde7223747601823f7535d7968ba98b4881e09&quot;</span><span class="p">,</span> <span class="mi">1029</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;CFX:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE7GGP3VPU&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.decode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base32_address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="cfx_address.types.html#cfx_address.types.Base32AddressParts" title="cfx_address.types.Base32AddressParts"><span class="pre">Base32AddressParts</span></a></span></span><a class="headerlink" href="#cfx_address.Base32Address.decode" title="Link to this definition"></a></dt>
+<dd><p>Decode a base32 address string and get its hex_address, address_type, and network_id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>base32_address</strong> (<em>str</em>) – address encoded in base32 format</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidBase32Address</strong> – the parameter is not a valid CIP-37 address</p>
+</dd>
+<dt class="field-odd">Return Base32AddressParts<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a dict object with field “hex_address”, “address_type” and “network_id”</p>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;cfxtest:aatp533cg7d0agbd87kz48nj1mpnkca8be1rz695j4&quot;</span><span class="p">)</span>
+<span class="go">{&#39;network_id&#39;: 1, &#39;hex_address&#39;: &#39;0x1ECdE7223747601823f7535d7968Ba98b4881E09&#39;, &#39;address_type&#39;: &#39;user&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.is_valid_base32">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_valid_base32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#cfx_address.Base32Address.is_valid_base32" title="Link to this definition"></a></dt>
+<dd><p>Whether a value is a valid string-typed base32 address</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return bool<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if valid, else False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.validate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="k"><span class="pre">True</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#cfx_address.Base32Address.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate if a value is a valid string-typed base32_address, raises an exception if not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>str</em>) – value to validate</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidBase32Address</strong> – raises an exception if the address is not a valid base32 address</p>
+</dd>
+<dt class="field-odd">Return Literal[True]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>returns True only if address is valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.equals">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#cfx_address.Base32Address.equals" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Check if two addresses share same hex_address and network_id</div>
+<div class="line">It will throw an error if any param is not in CIP-37 format while <a class="reference internal" href="#cfx_address.Base32Address.__eq__" title="cfx_address.Base32Address.__eq__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__eq__()</span></code></a> doesn’t</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address1</strong> (<em>str</em>) – base32 address to compare</p></li>
+<li><p><strong>address2</strong> (<em>str</em>) – base32 address to compare</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidBase32Address</strong> – either address is not a valid base32 address</p>
+</dd>
+<dt class="field-odd">Return bool<span class="colon">:</span></dt>
+<dd class="field-odd"><p>whether two addresses share same hex_address and network_id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.zero_address">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zero_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network_id:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address" title="cfx_address.address.Base32Address"><span class="pre">Base32Address</span></a></span></span><a class="headerlink" href="#cfx_address.Base32Address.zero_address" title="Link to this definition"></a></dt>
+<dd><p>Get zero address of the target network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network_id</strong> (<em>int</em>) – target network_id, defaults to <cite>Base32Address.default_network_id</cite></p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – whether the zero address is presented in verbose mode, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return Base32Address<span class="colon">:</span></dt>
+<dd class="field-even"><p>base32 format zero address of the target network</p>
+</dd>
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">zero_address</span><span class="p">(</span><span class="n">network_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&#39;cfxtest:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f0vrcsw&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.shorten_base32_address">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shorten_base32_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base32_address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#cfx_address.Base32Address.shorten_base32_address" title="Link to this definition"></a></dt>
+<dd><p>Returns the abbreviation of the address</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base32_address</strong> (<em>str</em>) – address to shorten</p></li>
+<li><p><strong>compressed</strong> (<em>bool</em>) – whether the abbreviation will be presented in compressed form,            which only affects mainnet addresses, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidBase32Address</strong> – raised if address is invalid</p>
+</dd>
+<dt class="field-odd">Return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the abbreviation string</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">shorten_base32_address</span><span class="p">(</span><span class="s2">&quot;cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu&quot;</span><span class="p">)</span>
+<span class="go">&#39;cfx:aat...7ggp3vpu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">shorten_base32_address</span><span class="p">(</span><span class="s2">&quot;cfx:aatp533cg7d0agbd87kz48nj1mpnkca8be7ggp3vpu&quot;</span><span class="p">,</span> <span class="n">compressed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;cfx:aat...3vpu&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfx_address.Base32Address.calculate_mapped_evm_space_address">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_mapped_evm_space_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base32_address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ChecksumAddress</span></span></span><a class="headerlink" href="#cfx_address.Base32Address.calculate_mapped_evm_space_address" title="Link to this definition"></a></dt>
+<dd><p>Calculate the address of mapped account for EVM space as defined in <a class="reference external" href="https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account">https://github.com/Conflux-Chain/CIPs/blob/master/CIPs/cip-90.md#mapped-account</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>InvalidBase32Address</strong> – raised when address is not a valid base32 address</p>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Base32Address</span><span class="o">.</span><span class="n">calculate_mapped_evm_space_address</span><span class="p">(</span><span class="s2">&quot;CFXTEST:TYPE.USER:AATP533CG7D0AGBD87KZ48NJ1MPNKCA8BE1RZ695J4&quot;</span><span class="p">)</span>
+<span class="go">&#39;0x349f086998cF4a0C5a00b853a0E93239D81A97f6&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cfx_address.validate_base32">
+<span class="sig-prename descclassname"><span class="pre">cfx_address.</span></span><span class="sig-name descname"><span class="pre">validate_base32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="k"><span class="pre">True</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#cfx_address.validate_base32" title="Link to this definition"></a></dt>
+<dd><p>Validate if a value is a valid string-typed base32_address, raises an exception if not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>str</em>) – value to validate</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidBase32Address</strong> – raises an exception if the address is not a valid base32 address</p>
+</dd>
+<dt class="field-odd">Return Literal[True]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>returns True only if address is valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cfx_address.eth_eoa_address_to_cfx_hex">
+<span class="sig-prename descclassname"><span class="pre">cfx_address.</span></span><span class="sig-name descname"><span class="pre">eth_eoa_address_to_cfx_hex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eoa_address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HexAddress</span></span></span><a class="headerlink" href="#cfx_address.eth_eoa_address_to_cfx_hex" title="Link to this definition"></a></dt>
+<dd><p>Convert an ethereum EOA address to valid cfx hex address.</p>
+<p>In conflux, only addresses starting with 0x1 are valid user-type addresses. 
+This function convert ethereum EOA address to the corresponding form in conflux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>address</strong> (<em>str</em>) – ethereum address</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidHexAddress</strong> – the argument is not a valid hex address</p>
+</dd>
+<dt class="field-odd">Return HexAddress<span class="colon">:</span></dt>
+<dd class="field-odd"><p>corresponding hex address in conflux, starting with ‘0x1’</p>
+</dd>
+<dt class="field-even">Examplse<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">eth_eoa_address_to_cfx_hex</span><span class="p">(</span><span class="s2">&quot;0xd43d2a93e97245E290feE74276a1EF8D275bE646&quot;</span><span class="p">)</span>
+<span class="go">&#39;0x143d2a93e97245e290fee74276a1ef8d275be646&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cfx_address.public_key_to_cfx_hex">
+<span class="sig-prename descclassname"><span class="pre">cfx_address.</span></span><span class="sig-name descname"><span class="pre">public_key_to_cfx_hex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">public_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HexAddress</span></span></span><a class="headerlink" href="#cfx_address.public_key_to_cfx_hex" title="Link to this definition"></a></dt>
+<dd><p>return the corresponding hex address of a public key in conflux: “0x1” + keccak(pk).hex()[-39]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>public_key</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>bytes</em><em>]</em>) – str or bytes representation of public key</p>
+</dd>
+<dt class="field-even">Return HexAddress<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hex representation of the correspondign hex address</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">public_key_to_cfx_hex</span><span class="p">(</span><span class="s2">&quot;0xdacdaeba8e391e7649d3ac4b5329ca0e202d38facd928d88b5f729b89a497e43cc4ad3816fcfdb241497b3b43862afb4c899bc284bf60feca4ee66ff868d1feb&quot;</span><span class="p">)</span>
+<span class="go">&#39;0x152d251c36aec31072b90a85b95bf9435b07edb8&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cfx_address.address.html">cfx_address.address module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32AddressMeta"><code class="docutils literal notranslate"><span class="pre">Base32AddressMeta</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32AddressMeta.default_network_id"><code class="docutils literal notranslate"><span class="pre">Base32AddressMeta.default_network_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address"><code class="docutils literal notranslate"><span class="pre">Base32Address</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.default_network_id"><code class="docutils literal notranslate"><span class="pre">Base32Address.default_network_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.__eq__"><code class="docutils literal notranslate"><span class="pre">Base32Address.__eq__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.from_public_key"><code class="docutils literal notranslate"><span class="pre">Base32Address.from_public_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.network_id"><code class="docutils literal notranslate"><span class="pre">Base32Address.network_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.hex_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.hex_address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.address_type"><code class="docutils literal notranslate"><span class="pre">Base32Address.address_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.eth_checksum_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.eth_checksum_address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.verbose_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.verbose_address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.abbr"><code class="docutils literal notranslate"><span class="pre">Base32Address.abbr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.compressed_abbr"><code class="docutils literal notranslate"><span class="pre">Base32Address.compressed_abbr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.mapped_evm_space_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.mapped_evm_space_address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.encode_base32"><code class="docutils literal notranslate"><span class="pre">Base32Address.encode_base32()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.decode"><code class="docutils literal notranslate"><span class="pre">Base32Address.decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.is_valid_base32"><code class="docutils literal notranslate"><span class="pre">Base32Address.is_valid_base32()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.validate"><code class="docutils literal notranslate"><span class="pre">Base32Address.validate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.equals"><code class="docutils literal notranslate"><span class="pre">Base32Address.equals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.zero_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.zero_address()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.shorten_base32_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.shorten_base32_address()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.Base32Address.calculate_mapped_evm_space_address"><code class="docutils literal notranslate"><span class="pre">Base32Address.calculate_mapped_evm_space_address()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.address.html#cfx_address.address.get_base32_address_factory"><code class="docutils literal notranslate"><span class="pre">get_base32_address_factory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cfx_address.base32.html">cfx_address.base32 module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.base32.html#cfx_address.base32.encode"><code class="docutils literal notranslate"><span class="pre">encode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.base32.html#cfx_address.base32.decode"><code class="docutils literal notranslate"><span class="pre">decode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.base32.html#cfx_address.base32.decode_to_words"><code class="docutils literal notranslate"><span class="pre">decode_to_words()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.base32.html#cfx_address.base32.encode_words"><code class="docutils literal notranslate"><span class="pre">encode_words()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cfx_address.consts.html">cfx_address.consts module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cfx_address.types.html">cfx_address.types module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.types.html#cfx_address.types.starts_with_net"><code class="docutils literal notranslate"><span class="pre">starts_with_net()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.types.html#cfx_address.types.Base32AddressParts"><code class="docutils literal notranslate"><span class="pre">Base32AddressParts</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.types.html#cfx_address.types.Base32AddressParts.network_id"><code class="docutils literal notranslate"><span class="pre">Base32AddressParts.network_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.types.html#cfx_address.types.Base32AddressParts.address_type"><code class="docutils literal notranslate"><span class="pre">Base32AddressParts.address_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cfx_address.types.html#cfx_address.types.Base32AddressParts.hex_address"><code class="docutils literal notranslate"><span class="pre">Base32AddressParts.hex_address</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cfx_address.utils.html">cfx_address.utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.utils.html#cfx_address.utils.validate_hex_address"><code class="docutils literal notranslate"><span class="pre">validate_hex_address()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.utils.html#cfx_address.utils.validate_network_id"><code class="docutils literal notranslate"><span class="pre">validate_network_id()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.utils.html#cfx_address.utils.eth_eoa_address_to_cfx_hex"><code class="docutils literal notranslate"><span class="pre">eth_eoa_address_to_cfx_hex()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.utils.html#cfx_address.utils.validate_base32"><code class="docutils literal notranslate"><span class="pre">validate_base32()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.utils.html#cfx_address.utils.is_valid_base32"><code class="docutils literal notranslate"><span class="pre">is_valid_base32()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.utils.html#cfx_address.utils.validate_address_agaist_network_id"><code class="docutils literal notranslate"><span class="pre">validate_address_agaist_network_id()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cfx_address.utils.html#cfx_address.utils.public_key_to_cfx_hex"><code class="docutils literal notranslate"><span class="pre">public_key_to_cfx_hex()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Zhang Wenda.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
